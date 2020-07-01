@@ -14,7 +14,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class MapFactory {
-  private String name;
+  private String name = "empty";
   public List<Room> rooms = new ArrayList<>();
   public int endTime;
   private int room_counter = 0;
