@@ -1,0 +1,319 @@
+[
+  {
+    "name": "Khareeta",
+    "file": "map.json",
+    "end_time": 3600,
+    "player": {
+      "golds": 3,
+      "flashLights": 0,
+      "orientation": "east",
+      "location": "c3",
+      "roomIndex": 0
+    },
+    "rooms": [
+      {
+        "room": {
+          "name": "room_1",
+          "lit": "false",
+          "switch": "true",
+          "n_wall": {
+            "door": {
+              "name": "room_1-door_1",
+              "key": "key-room_1-door_1",
+              "is_locked": "true",
+              "to": "room_2",
+              "golden": "false",
+              "location": "b1"
+            }
+          },
+          "e_wall": {
+            "door": {
+              "name": "room_1-door_2",
+              "key": "key-room_1-door_2",
+              "is_locked": "true",
+              "to": "room_3",
+              "golden": "false",
+              "location": "e3"
+            }
+          },
+          "s_wall": {
+            "chest": {
+              "name": "room_1-chest_1",
+              "is_locked": "true",
+              "key": "key-room_1-chest_1",
+              "content": {
+                "keys": [
+                  "key-room_1-door_2"
+                ],
+                "flashLights": 1,
+                "golds": 0
+              },
+              "location": "d5"
+            },
+            "safe": {
+              "name": "room_1-safe_1",
+              "is_locked": "true",
+              "key": "key-room_1-safe_1",
+              "content": {
+                "golds": 10
+              },
+              "location": "c5"
+            }
+          },
+          "w_wall": {
+            "chest": {
+              "name": "room_1-chest_2",
+              "is_locked": "false",
+              "key": "",
+              "content": {
+                "keys": [
+                  "key-room_1-door_1",
+                  "key-room_1-chest_1",
+                  "key-room_1-safe_1"
+                ],
+                "flashLights": 0,
+                "golds": 5,
+                "masterKeys": 1
+              },
+              "location": "a4"
+            }
+          }
+        }
+      },
+      {
+        "room": {
+          "name": "room_2",
+          "lit": "true",
+          "switch": "false",
+          "n_wall": {
+            "chest": {
+              "name": "room_2-chest_1",
+              "is_locked": "true",
+              "key": "",
+              "content": {
+                "golds": 1
+              },
+              "location": "c1"
+            },
+            "table": {
+              "name": "room_2-table_1",
+              "is_locked": "false",
+              "content": {
+                "golds": 1
+              },
+              "location": "d1"
+            }
+          },
+          "e_wall": {
+            "mirror": {
+              "content": {
+                "keys": [
+                  "key-room_2-door_1"
+                ],
+                "golds": 1
+              },
+              "location": "e2"
+            },
+            "seller": {
+              "name": "room_2-seller",
+              "location": "e4",
+              "content": {
+                "keys": [
+                  {
+                    "name": "key-room_4-door_1",
+                    "cost": 10
+                  }
+                ],
+                "flashLights": [
+                  {
+                    "name": "#1",
+                    "cost": 5
+                  },
+                  {
+                    "name": "#2",
+                    "cost": 8
+                  }
+                ]
+              },
+              "selling": {
+                "keys": 7,
+                "flashLights": 2
+              }
+            }
+          },
+          "s_wall": {
+            "door": {
+              "name": "room_2-door_2",
+              "key": "",
+              "is_locked": "false",
+              "to": "room_1",
+              "golden": "false",
+              "location": "b5"
+            }
+          },
+          "w_wall": {
+            "door": {
+              "name": "room_2-door_1",
+              "key": "key-room_2-door_1",
+              "is_locked": "true",
+              "to": "",
+              "golden": "false",
+              "location": "a3"
+            }
+          }
+        }
+      },
+      {
+        "room": {
+          "name": "room_3",
+          "lit": "true",
+          "switch": "true",
+          "n_wall": {
+            "painting": {
+              "content": {
+                "keys": [
+                  "key-room_3-door_2"
+                ]
+              },
+              "location": "c1"
+            },
+            "window": {
+              "location": "d1"
+            }
+          },
+          "e_wall": {
+            "door": {
+              "name": "room_3-door_1",
+              "key": "",
+              "is_locked": "false",
+              "to": "room_4",
+              "golden": "false",
+              "location": "e3"
+            }
+          },
+          "s_wall": {
+            "door": {
+              "name": "room_3-door_2",
+              "key": "key-room_3-door_2",
+              "is_locked": "true",
+              "to": "room_5",
+              "golden": "false",
+              "location": "d5"
+            }
+          },
+          "w_wall": {
+            "door": {
+              "name": "room_3-door_3",
+              "key": "",
+              "is_locked": "false",
+              "to": "room_1",
+              "golden": "false",
+              "location": "a3"
+            }
+          }
+        }
+      },
+      {
+        "room": {
+          "name": "room_4",
+          "lit": "false",
+          "switch": "false",
+          "n_wall": {
+            "door": {
+              "name": "room_4-door_1",
+              "key": "key-room_4-door_1",
+              "is_locked": "true",
+              "to": "",
+              "golden": "true",
+              "location": "d1"
+            }
+          },
+          "e_wall": {
+            "mirror": {
+              "content": {},
+              "location": "e3"
+            },
+            "painting": {
+              "content": {},
+              "location": "e4"
+            }
+          },
+          "s_wall": {
+            "chest": {
+              "name": "room_4-chest_1",
+              "is_locked": "false",
+              "key": "",
+              "content": {
+                "keys": [
+                  "key-room_5-chest_1"
+                ],
+                "golds": 15
+              },
+              "location": "b5"
+            }
+          },
+          "w_wall": {
+            "door": {
+              "name": "room_4-door_2",
+              "key": "",
+              "is_locked": "false",
+              "to": "room_3",
+              "golden": "false",
+              "location": "a3"
+            }
+          }
+        }
+      },
+      {
+        "room": {
+          "name": "room_5",
+          "lit": "true",
+          "switch": "false",
+          "n_wall": {
+            "door": {
+              "name": "room_5-door_1",
+              "key": "key-room_5-door_1",
+              "is_locked": "true",
+              "to": "room_3",
+              "golden": "false",
+              "location": "d1"
+            }
+          },
+          "e_wall": {
+          },
+          "s_wall": {
+            "chest": {
+              "name": "room_5-chest_1",
+              "is_locked": "true",
+              "key": "key-room_5-chest_1",
+              "content": {
+                "keys": [
+                  "key-room_4-door_1"
+                ]
+              },
+              "location": "b5"
+            },
+            "gate": {
+              "name": "room_5-gate_1",
+              "is_locked": "false",
+              "to": "room_2",
+              "golden": "false",
+              "location": "e5"
+            }
+          },
+          "w_wall": {
+            "mirror": {
+              "name": "room_5-mirror_1",
+              "content": {
+                "keys": [
+                  "key-room_5-door_1"
+                ]
+              },
+              "location": "a3"
+            }
+          }
+        }
+      }
+    ]
+  }
+]
