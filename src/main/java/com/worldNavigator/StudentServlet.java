@@ -52,7 +52,7 @@ public class StudentServlet extends HttpServlet {
 		out.println("The student is confirmed: "
 					+ command);
 		out.println("playerControllerToString: "
-				+ maps.maps.toString());
+				+ new MapFactory("map.json").toString());
 		
 		out.println("</body></html>");
 		
