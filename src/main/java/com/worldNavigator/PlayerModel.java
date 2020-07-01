@@ -27,8 +27,8 @@ public class PlayerModel extends Observable {
     this.location = map.location;
     this.orientation = map.orientation;
     this.roomIndex = map.roomIndex;
-    this.room = this.rooms.get(this.roomIndex);
-    this.wall = this.room.walls.get(this.orientation);
+    this.room = map.rooms.get(this.roomIndex);
+    this.wall = map.rooms.get(this.roomIndex).walls.get(this.orientation);
   }
 
   public void notify_player(String msg) {
