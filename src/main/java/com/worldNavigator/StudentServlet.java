@@ -35,14 +35,15 @@ public class StudentServlet extends HttpServlet {
 		// Step 2: get the printwriter
 		PrintWriter out = response.getWriter();
 
+
+		String command = request.getParameter("command");
+
 		Maps maps = new Maps();
 		maps.addMap("map.json");
 
 		Menu menu = new Menu();
-		menu.setMaps(maps);
+		menu.setMaps(maps, command);
 		menu.start();
-
-		String command = request.getParameter("command");
 
 		String playerControllerToString = menu.player.toString();
 		// Step 3: generate the HTML content

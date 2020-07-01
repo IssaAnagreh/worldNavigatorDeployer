@@ -8,12 +8,12 @@ public class Menu {
   public PlayerControllerInterface player;
   private PlayerModel playerModel;
 
-  public void setMaps(Maps maps) {
+  public void setMaps(Maps maps, String sc) {
     this.maps = maps;
-    this.map_chooser();
+    this.map_chooser(sc);
   }
 
-  public void map_chooser() {
+  public void map_chooser(String sc) {
     System.out.println("Choose one of the available maps: ");
     int counter = 0;
     while (counter != this.maps.maps.size()) {
@@ -21,8 +21,8 @@ public class Menu {
       ++counter;
     }
     System.out.println("Enter map number");
-    Scanner sc = new Scanner(System.in);
-    this.map_index = sc.nextInt();
+//    Scanner sc = new Scanner(System.in);
+    this.map_index = Integer.parseInt(sc);//sc.nextInt();
   }
 
   public void preparePlayer(MapFactory map) {
