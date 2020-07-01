@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Menu {
   private Maps maps;
   private int map_index;
-  private PlayerControllerInterface player;
+  public PlayerControllerInterface player;
   private PlayerModel playerModel;
 
   public void setMaps(Maps maps) {
@@ -22,7 +22,7 @@ public class Menu {
     }
     System.out.println("Enter map number");
     Scanner sc = new Scanner(System.in);
-    this.map_index = sc.nextInt();
+    this.map_index = 0;//sc.nextInt();
   }
 
   public void preparePlayer(MapFactory map) {

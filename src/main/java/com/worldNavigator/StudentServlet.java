@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class StudentServlet
  */
-@WebServlet("/StudentServlet")
+//@WebServlet("/StudentServlet")
 public class StudentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -34,13 +34,24 @@ public class StudentServlet extends HttpServlet {
 		
 		// Step 2: get the printwriter
 		PrintWriter out = response.getWriter();
-		
+
+		Maps maps = new Maps();
+		maps.addMap("map.json");
+
+		Menu menu = new Menu();
+		menu.setMaps(maps);
+		menu.start();
+
+		String command = request.getParameter("command");
+
+		String playerControllerToString = menu.player.toString();
 		// Step 3: generate the HTML content
 		out.println("<html><body>");
 
 		out.println("The student is confirmed: "
-					+ request.getParameter("firstName") + " "
-					+ request.getParameter("lastName"));
+					+ command);
+		out.println("playerControllerToString: "
+				+ playerControllerToString);
 		
 		out.println("</body></html>");
 		
