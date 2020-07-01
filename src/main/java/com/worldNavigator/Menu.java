@@ -22,7 +22,7 @@ public class Menu {
     }
     System.out.println("Enter map number");
     Scanner sc = new Scanner(System.in);
-    this.map_index = 0;//sc.nextInt();
+    this.map_index = sc.nextInt();
   }
 
   public void preparePlayer(MapFactory map) {
