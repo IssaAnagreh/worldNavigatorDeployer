@@ -39,7 +39,7 @@ public class PlayerViewer extends HttpServlet implements Observer {
 
     String command = request.getParameter("command");
 
-    this.playerController.server_command(command);
+//    this.playerController.server_command(command);
     // Step 3: generate the HTML content
     out.println("<html><body>");
 
