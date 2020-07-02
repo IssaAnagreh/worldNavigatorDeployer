@@ -43,16 +43,20 @@ public class MapFactory {
     try (FileReader reader = new FileReader(mapName)) {
       // Read JSON file
       Object obj = jsonParser.parse(reader);
+      this.name = "try";
 
       JSONArray maps = castToJSONArray(obj);
       maps.forEach(map -> parseMapObject(castToJSONObject(map)));
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
+      this.name = "FileNotFoundException";
     } catch (IOException e) {
       e.printStackTrace();
+      this.name = "IOException";
     } catch (ParseException e) {
       e.printStackTrace();
+      this.name = "ParseException";
     }
   }
 
