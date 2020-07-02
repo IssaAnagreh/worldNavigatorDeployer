@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Menu {
   private Maps maps;
   private int map_index;
-  public PlayerControllerInterface player;
+  public PlayerController player;
   public PlayerModel playerModel;
   public PlayerViewer playerViewer;
 

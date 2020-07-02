@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class PlayerController implements PlayerControllerInterface {
-    PlayerModel playerModel;
+    public PlayerModel playerModel;
     private final List<String> DOOR_COMMANDS = new ArrayList<>();
     private final List<String> CHEST_COMMANDS = new ArrayList<>();
     private final List<String> MIRROR_COMMANDS = new ArrayList<>();
@@ -37,11 +37,6 @@ public class PlayerController implements PlayerControllerInterface {
 
     public void startGame() throws IOException {
         this.playerModel.startGame();
-        while (this.playerModel.isPlaying()) {
-            this.playerModel.notify_player("Enter your next command: ");
-            String command = this.playerModel.br.readLine();
-            if (this.playerModel.isPlaying()) use_method(command.trim());
-        }
     }
 
     public void use_command(String command) {
