@@ -39,7 +39,7 @@ public class StudentServlet extends HttpServlet {
 		String command = request.getParameter("command");
 
 		Maps maps = new Maps();
-		maps.addMap("map.json");
+		MapFactory map = maps.generate("map.json");
 
 //		Menu menu = new Menu();
 //		menu.setMaps(maps, command);
@@ -47,14 +47,13 @@ public class StudentServlet extends HttpServlet {
 
 //		String playerControllerToString = menu.player.toString();
 
-		MapFactory mapFactory = new MapFactory("map.json");
 		// Step 3: generate the HTML content
 		out.println("<html><body>");
 
 		out.println("The student is confirmed: "
 					+ command);
 		out.println("playerControllerToString: "
-				+ mapFactory.toString());
+				+ map.toString());
 		
 		out.println("</body></html>");
 		
