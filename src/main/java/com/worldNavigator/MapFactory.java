@@ -61,7 +61,7 @@ public class MapFactory {
       throw new IllegalArgumentException();
     } else {
       // Get map object within list
-      name = (String) map.get("name");
+      name = "JSON map";//(String) map.get("name");
       endTime = Integer.parseInt(map.get("end_time").toString());
       ContentManager contentManager = new ContentManager();
       String player_string = "player";
