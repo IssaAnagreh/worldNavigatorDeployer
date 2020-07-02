@@ -72,6 +72,7 @@ public class PlayerViewer extends HttpServlet implements Observer {
   public void update(Observable o, Object arg) {
     PlayerModel playerModel = (PlayerModel) o;
     String msg = (String) arg;
+    this.output = msg;
     if (playerModel.consoleColor == null) {
       if (playerModel.isInline) {
         System.out.print(msg);
