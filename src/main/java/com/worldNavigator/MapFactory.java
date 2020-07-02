@@ -42,18 +42,16 @@ public class MapFactory {
     JSONParser jsonParser = new JSONParser();
 
     File file = new File("maps.json");
-//    System.out.println("aaa "+ file.getAbsolutePath());
     try (FileReader reader = new FileReader("map.json")) {
       // Read JSON file
       Object obj = jsonParser.parse(reader);
-      this.name = "try";
 
       JSONArray maps = castToJSONArray(obj);
       maps.forEach(map -> parseMapObject(castToJSONObject(map)));
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
-      this.name = file.getAbsolutePath();
+      this.name = "FileNotFoundException";
     } catch (IOException e) {
       e.printStackTrace();
       this.name = "IOException";
@@ -68,7 +66,7 @@ public class MapFactory {
       throw new IllegalArgumentException();
     } else {
       // Get map object within list
-      name = "JSON map";//(String) map.get("name");
+      name = (String) map.get("name");
       endTime = Integer.parseInt(map.get("end_time").toString());
       ContentManager contentManager = new ContentManager();
       String player_string = "player";
