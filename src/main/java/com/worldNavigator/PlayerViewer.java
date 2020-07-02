@@ -49,7 +49,7 @@ public class PlayerViewer extends HttpServlet implements Observer {
     menu.setMaps(maps, "0");
     menu.start(this);
 
-    output = this.playerController.toString();
+//    output = this.playerController.toString();
 
     this.playerController.use_command(command);
 
