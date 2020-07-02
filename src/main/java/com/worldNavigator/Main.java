@@ -10,6 +10,6 @@ public class Main {
 
     Menu menu = new Menu();
     menu.setMaps(maps, "0");
-    menu.start(new PlayerViewer());
+    menu.start();
   }
 }

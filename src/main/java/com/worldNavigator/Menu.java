@@ -25,16 +25,14 @@ public class Menu {
     this.map_index = Integer.parseInt(sc);//sc.nextInt();
   }
 
-  public void preparePlayer(MapFactory map, PlayerViewer playerViewer) {
+  public void preparePlayer(MapFactory map) {
     this.playerModel = new PlayerModel(map, this);
     this.player = new PlayerControllerMaster(this.playerModel);
-//    this.playerViewer = new PlayerViewer(this.player, "Isa");
-    playerViewer.playerController = this.player;
-    playerViewer.setName("Isa");
+    this.playerViewer = new PlayerViewer(this.player, "Isa");
   }
 
-  public void start(PlayerViewer playerViewer) throws IOException {
-    preparePlayer(this.maps.maps.get(this.map_index), playerViewer);
+  public void start() throws IOException {
+    preparePlayer(this.maps.maps.get(this.map_index));
     this.player.startGame();
   }
 
@@ -43,7 +41,7 @@ public class Menu {
     MapFactory new_map = this.maps.generate(mapName);
     this.maps.replace(new_map, this.map_index);
 
-    preparePlayer(this.maps.maps.get(0), this.playerViewer);
+    preparePlayer(this.maps.maps.get(0));
     player.startGame();
   }
 
