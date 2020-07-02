@@ -27,7 +27,7 @@ public class Menu {
 
   public void preparePlayer(MapFactory map) {
     this.playerModel = new PlayerModel(map, this);
-    this.player = new PlayerController(playerModel);
+    this.player = new PlayerControllerMaster();
     this.playerViewer = new PlayerViewer(this.player, "Isa");
   }
 
