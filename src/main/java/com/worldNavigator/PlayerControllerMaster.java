@@ -15,7 +15,8 @@ public class PlayerControllerMaster implements PlayerControllerInterface {
     protected Map<String, Command> shortCommandsMap = new HashMap<>();
     public final String HINT_SENTENCE = ", use <hints> command to stop these hints";
 
-    public PlayerControllerMaster() {
+    public PlayerControllerMaster(PlayerModel playerModel) {
+        this.playerModel = playerModel;
         this.init_commands();
         String checkString = "check";
         CHEST_COMMANDS.add(checkString);
