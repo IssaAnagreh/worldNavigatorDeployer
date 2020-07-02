@@ -53,7 +53,7 @@ public class MapFactory {
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
-      this.name = file.getName();
+      this.name = file.getAbsolutePath();
     } catch (IOException e) {
       e.printStackTrace();
       this.name = "IOException";
