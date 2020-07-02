@@ -11,6 +11,7 @@ public final class GameTimer extends PlayerController {
   private final PlayerModel playerModel;
 
   public GameTimer(int seconds, PlayerModel playerModel) {
+    super(playerModel);
     timer = new Timer();
     timer.schedule(new FinishTask(), MILLI_IN_SEC * seconds);
     timer.schedule(new RemindTask(), 0, MILLI_IN_SEC);

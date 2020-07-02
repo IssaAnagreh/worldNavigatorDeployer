@@ -1,7 +1,7 @@
 package com.worldNavigator;
 public class PlayerController extends PlayerControllerMaster {
   public PlayerController(PlayerModel playerModel) {
-    super.playerModel = playerModel;
+    super(playerModel);
     super.shortCommandsMap.put("o", PlayerControllerInterface::myOrientation);
     super.shortCommandsMap.put("loc", PlayerControllerInterface::myLocation);
     super.shortCommandsMap.put("l", PlayerControllerInterface::rotateLeft);
@@ -21,8 +21,6 @@ public class PlayerController extends PlayerControllerMaster {
     super.shortCommandsMap.put("master", playerController -> super.playerModel.use_masterKey());
     super.shortCommandsMap.put("setloc", PlayerControllerInterface::setLocation);
   }
-
-  public PlayerController() {}
 
   @Override
   public String toString() {
