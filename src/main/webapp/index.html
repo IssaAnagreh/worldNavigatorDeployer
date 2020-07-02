@@ -19,7 +19,7 @@
        jQuery.ajax({
          type:"GET",
          url : "StudentServlet",
-         data : param,
+         data : {command: "l"},
          success : function(data) {
             $('p').text('success')
          }
