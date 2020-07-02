@@ -6,7 +6,8 @@ public class Menu {
   private Maps maps;
   private int map_index;
   public PlayerControllerInterface player;
-  private PlayerModel playerModel;
+  public PlayerModel playerModel;
+  public PlayerViewer playerViewer;
 
   public void setMaps(Maps maps, String sc) {
     this.maps = maps;
@@ -21,14 +22,13 @@ public class Menu {
       ++counter;
     }
     System.out.println("Enter map number");
-//    Scanner sc = new Scanner(System.in);
     this.map_index = Integer.parseInt(sc);//sc.nextInt();
   }
 
   public void preparePlayer(MapFactory map) {
     this.playerModel = new PlayerModel(map, this);
     this.player = new PlayerController(playerModel);
-    new PlayerViewer(this.player, "Isa");
+    this.playerViewer = new PlayerViewer(this.player, "Isa");
   }
 
   public void start() throws IOException {

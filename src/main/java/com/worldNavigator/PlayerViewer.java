@@ -1,5 +1,6 @@
 package com.worldNavigator;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,9 +9,12 @@ import java.io.PrintWriter;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PlayerViewer implements Observer {
+@WebServlet("/StudentServlet")
+public class PlayerViewer extends HttpServlet implements Observer {
+  private static final long serialVersionUID = 1L;
   public final PlayerControllerInterface playerController;
   private String name;
+  private String output;
 
   public PlayerViewer(PlayerControllerInterface playerController, String name) {
     super();
@@ -19,10 +23,47 @@ public class PlayerViewer implements Observer {
     this.playerController.subscribe(this);
   }
 
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    // Step 1: set content type
+    response.setContentType("text/html");
+
+    // Step 2: get the printwriter
+    PrintWriter out = response.getWriter();
+
+
+    String command = request.getParameter("command");
+
+    Maps maps = new Maps();
+    maps.addMap("map.json");
+
+    Menu menu = new Menu();
+    menu.setMaps(maps, command);
+    menu.start();
+
+    this.playerController.use_command(command);
+
+    // Step 3: generate the HTML content
+    out.println("<html><body>");
+
+    out.println("Command is: "
+            + command);
+    out.println("Output is: " + output);
+
+    out.println("</body></html>");
+
+  }
+
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // TODO Auto-generated method stub
+    doGet(request, response);
+  }
+
   @Override
   public void update(Observable o, Object arg) {
     PlayerModel playerModel = (PlayerModel) o;
     String msg = (String) arg;
+    this.output = msg;
     if (playerModel.consoleColor == null) {
       if (playerModel.isInline) {
         System.out.print(msg);
@@ -35,6 +76,7 @@ public class PlayerViewer implements Observer {
   }
 
   public void update(Observable o, String msg, ConsoleColors color) {
+    this.output = msg;
     String ANSI;
     String ANSI_RESET = "\u001B[0m";
     if (color == ConsoleColors.black) {

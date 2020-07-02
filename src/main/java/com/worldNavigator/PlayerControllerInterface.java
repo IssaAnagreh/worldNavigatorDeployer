@@ -53,4 +53,6 @@ public interface PlayerControllerInterface {
   void use_method(String command);
 
   void switchHints();
+
+  void use_command(String command);
 }
