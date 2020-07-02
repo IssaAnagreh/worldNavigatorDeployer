@@ -61,14 +61,6 @@ public class StudentServlet extends HttpServlet {
 		out.println("</body></html>");
 		
 	}
-
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

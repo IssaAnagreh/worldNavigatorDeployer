@@ -1,11 +1,14 @@
 package com.worldNavigator;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,6 +26,9 @@ public class PlayerViewer extends HttpServlet implements Observer {
     this.playerController.subscribe(this);
   }
 
+  /**
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+   */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     // Step 1: set content type
@@ -54,6 +60,9 @@ public class PlayerViewer extends HttpServlet implements Observer {
 
   }
 
+  /**
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+   */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     // TODO Auto-generated method stub
     doGet(request, response);
