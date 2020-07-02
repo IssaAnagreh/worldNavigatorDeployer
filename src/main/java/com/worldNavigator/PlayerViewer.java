@@ -14,7 +14,7 @@ public class PlayerViewer extends HttpServlet implements Observer {
   private static final long serialVersionUID = 1L;
   public PlayerControllerInterface playerController;
   private String name;
-  private String output;
+  private String output = "Empty";
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -49,7 +49,7 @@ public class PlayerViewer extends HttpServlet implements Observer {
     menu.setMaps(maps, "0");
     menu.start();
 
-    this.playerController.use_command(command);
+//    this.playerController.use_command(command);
 
     // Step 3: generate the HTML content
     out.println("<html><body>");
