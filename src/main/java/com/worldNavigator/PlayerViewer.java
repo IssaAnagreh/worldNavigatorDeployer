@@ -1,23 +1,28 @@
 package com.worldNavigator;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.util.Observable;
 import java.util.Observer;
 
 @WebServlet("/StudentServlet")
 public class PlayerViewer extends HttpServlet implements Observer {
   private static final long serialVersionUID = 1L;
-  public final PlayerControllerInterface playerController;
+  public PlayerControllerInterface playerController;
   private String name;
   private String output;
+
+  /**
+   * @see HttpServlet#HttpServlet()
+   */
+  public PlayerViewer() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
 
   public PlayerViewer(PlayerControllerInterface playerController, String name) {
     super();
@@ -26,9 +31,6 @@ public class PlayerViewer extends HttpServlet implements Observer {
     this.playerController.subscribe(this);
   }
 
-  /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-   */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     // Step 1: set content type
@@ -60,9 +62,6 @@ public class PlayerViewer extends HttpServlet implements Observer {
 
   }
 
-  /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-   */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     // TODO Auto-generated method stub
     doGet(request, response);
@@ -72,10 +71,10 @@ public class PlayerViewer extends HttpServlet implements Observer {
   public void update(Observable o, Object arg) {
     PlayerModel playerModel = (PlayerModel) o;
     String msg = (String) arg;
-    this.output = msg;
     if (playerModel.consoleColor == null) {
       if (playerModel.isInline) {
         System.out.print(msg);
+        this.output = msg;
       } else {
         System.out.println(msg);
       }
@@ -85,7 +84,6 @@ public class PlayerViewer extends HttpServlet implements Observer {
   }
 
   public void update(Observable o, String msg, ConsoleColors color) {
-    this.output = msg;
     String ANSI;
     String ANSI_RESET = "\u001B[0m";
     if (color == ConsoleColors.black) {
