@@ -35,7 +35,7 @@ public class MapFactory {
 
   @SuppressWarnings("unchecked")
   public MapFactory(String mapName) {
-    this.mapName = mapName;
+    this.mapName = "mapName";
 
     // JSON parser object to parse read file
     JSONParser jsonParser = new JSONParser();
