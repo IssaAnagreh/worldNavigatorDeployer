@@ -51,7 +51,7 @@ public class MapFactory {
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
-      this.name = "FileNotFoundException";
+      this.name = e.toString();
     } catch (IOException e) {
       e.printStackTrace();
       this.name = "IOException";
