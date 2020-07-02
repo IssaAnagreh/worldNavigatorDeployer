@@ -41,7 +41,8 @@ public class MapFactory {
     // JSON parser object to parse read file
     JSONParser jsonParser = new JSONParser();
 
-    File file = new File("./maps.json");
+    File file = new File("maps.json");
+//    System.out.println("aaa "+ file.getAbsolutePath());
     try (FileReader reader = new FileReader("map.json")) {
       // Read JSON file
       Object obj = jsonParser.parse(reader);
@@ -52,7 +53,7 @@ public class MapFactory {
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
-      this.name = String.valueOf(file.exists());
+      this.name = file.getName();
     } catch (IOException e) {
       e.printStackTrace();
       this.name = "IOException";
