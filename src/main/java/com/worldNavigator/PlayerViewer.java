@@ -50,7 +50,14 @@ public class PlayerViewer extends HttpServlet implements Observer {
     menu.start(this);
 
     this.playerController.use_command(command);
-//    output = this.playerController.toString();
+    output = this.playerController.toString();
+
+    try {
+      Thread.sleep(2000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+      output = "sleep error";
+    }
 
     // Step 3: generate the HTML content
     out.println("<html><body>");
