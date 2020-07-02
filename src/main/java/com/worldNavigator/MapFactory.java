@@ -41,7 +41,7 @@ public class MapFactory {
     // JSON parser object to parse read file
     JSONParser jsonParser = new JSONParser();
 
-    try (FileReader reader = new FileReader(new File("./../map.json"))) {
+    try (FileReader reader = new FileReader(new File("./map.json"))) {
       // Read JSON file
       Object obj = jsonParser.parse(reader);
       this.name = "try";
