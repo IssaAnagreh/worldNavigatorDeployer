@@ -1,16 +1,9 @@
 package com.worldNavigator;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+
 import java.util.Observable;
 import java.util.Observer;
 
-public class PlayerViewer extends HttpServlet implements Observer {
-  private static final long serialVersionUID = 1L;
+public class PlayerViewer implements Observer {
   public PlayerControllerInterface playerController;
   private String name;
 
