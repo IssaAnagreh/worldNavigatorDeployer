@@ -49,7 +49,8 @@ public class PlayerViewer extends HttpServlet implements Observer {
     menu.setMaps(maps, "0");
     menu.start();
 
-    this.playerController.use_command(command);
+//    this.playerController.use_command(command);
+    output = this.playerController.toString();
 
     // Step 3: generate the HTML content
     out.println("<html><body>");
