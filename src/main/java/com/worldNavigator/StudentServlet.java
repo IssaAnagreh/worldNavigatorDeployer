@@ -46,13 +46,15 @@ public class StudentServlet extends HttpServlet {
 //		menu.start();
 
 //		String playerControllerToString = menu.player.toString();
+
+		MapFactory mapFactory = new MapFactory("map.json");
 		// Step 3: generate the HTML content
 		out.println("<html><body>");
 
 		out.println("The student is confirmed: "
 					+ command);
 		out.println("playerControllerToString: "
-				+ new MapFactory("map.json").toString());
+				+ mapFactory.toString());
 		
 		out.println("</body></html>");
 		
