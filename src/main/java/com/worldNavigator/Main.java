@@ -9,7 +9,7 @@ public class Main {
     maps.addMap("map.json");
 
     Menu menu = new Menu();
-    menu.setMaps(maps, "0");
+    menu.setMaps(maps);
     menu.start();
   }
 }

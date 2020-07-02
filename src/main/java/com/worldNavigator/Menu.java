@@ -9,12 +9,17 @@ public class Menu {
   public PlayerModel playerModel;
   public PlayerViewer playerViewer;
 
+  public void setMaps(Maps maps) {
+    this.maps = maps;
+    this.map_chooser();
+  }
+
   public void setMaps(Maps maps, String sc) {
     this.maps = maps;
     this.map_chooser(sc);
   }
 
-  public void map_chooser(String sc) {
+  public void map_chooser() {
     System.out.println("Choose one of the available maps: ");
     int counter = 0;
     while (counter != this.maps.maps.size()) {
@@ -22,12 +27,17 @@ public class Menu {
       ++counter;
     }
     System.out.println("Enter map number");
-    this.map_index = Integer.parseInt(sc);//sc.nextInt();
+    Scanner sc = new Scanner(System.in);
+    this.map_index = sc.nextInt();
+  }
+
+  public void map_chooser(String sc) {
+    this.map_index = Integer.parseInt(sc);
   }
 
   public void preparePlayer(MapFactory map) {
     this.playerModel = new PlayerModel(map, this);
-    this.player = new PlayerControllerMaster(this.playerModel);
+    this.player = new PlayerController(this.playerModel);
     this.playerViewer = new PlayerViewer(this.player, "Isa");
   }
 
