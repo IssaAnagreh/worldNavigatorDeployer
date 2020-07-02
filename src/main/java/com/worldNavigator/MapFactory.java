@@ -1,5 +1,6 @@
 package com.worldNavigator;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -40,7 +41,7 @@ public class MapFactory {
     // JSON parser object to parse read file
     JSONParser jsonParser = new JSONParser();
 
-    try (FileReader reader = new FileReader("map.json")) {
+    try (FileReader reader = new FileReader(new File("map.json"))) {
       // Read JSON file
       Object obj = jsonParser.parse(reader);
       this.name = "try";
@@ -50,7 +51,7 @@ public class MapFactory {
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
-      this.name = jsonParser.toString();
+      this.name = "FileNotFoundException";
     } catch (IOException e) {
       e.printStackTrace();
       this.name = "IOException";
