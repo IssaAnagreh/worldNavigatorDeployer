@@ -20,7 +20,7 @@ public class PlayerViewer implements Observer {
             Socket s = new Socket("localhost", 8080);
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
             while (true) {
-                this.playerController.playerModel.notify_player("Enter your next command: ");
+                this.playerController.playerModel.notify_player("Enter next command: ");
                 Scanner command = new Scanner(System.in);
                 String cmd = command.next();
                 dout.writeUTF(cmd);
