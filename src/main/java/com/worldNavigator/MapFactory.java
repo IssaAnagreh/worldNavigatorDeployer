@@ -56,6 +56,7 @@ public class MapFactory extends HttpServlet {
     JSONParser jsonParser = new JSONParser();
 
     File file = new File("maps.json");
+    this.name = file.getAbsolutePath();
     try (FileReader reader = new FileReader("map.json")) {
       // Read JSON file
       Object obj = jsonParser.parse(reader);
