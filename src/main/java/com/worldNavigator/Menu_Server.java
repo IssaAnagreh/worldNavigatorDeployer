@@ -33,11 +33,13 @@ public class Menu_Server extends HttpServlet {
 
         String command = request.getParameter("command");
 
+        new Thread( () -> new Server()).start();
+
         Maps maps = new Maps();
         maps.addMap("map.json");
 
         Menu menu = new Menu();
-        menu.setMaps(maps, command);
+        menu.setMaps(maps, "0");
         menu.start();
 
         // Step 3: generate the HTML content
