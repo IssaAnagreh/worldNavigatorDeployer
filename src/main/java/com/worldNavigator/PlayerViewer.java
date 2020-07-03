@@ -1,5 +1,7 @@
 package com.worldNavigator;
 
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -7,9 +9,27 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-public class PlayerViewer implements Observer {
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/MenuServer")
+public class PlayerViewer extends HttpServlet implements Observer {
     public PlayerController playerController;
     private String name;
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public PlayerViewer() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
     // IO streams
     DataOutputStream toServer = null;
@@ -98,5 +118,35 @@ public class PlayerViewer implements Observer {
     @Override
     public String toString() {
         return "Player viewer";
+    }
+
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        new MapFactory("Min jowa al get");
+        // Step 1: set content type
+        response.setContentType("text/html");
+
+        // Step 2: get the printwriter
+        PrintWriter out = response.getWriter();
+
+        // Step 3: generate the HTML content
+        out.println("<html><body>");
+
+        out.println("Map Name: "
+                + this.name);
+
+        out.println("</body></html>");
+
+    }
+
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        doGet(request, response);
     }
 }

@@ -11,14 +11,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/MenuServer")
-public class MapFactory extends HttpServlet {
+public class MapFactory {
   private String name = "name empty";
   public List<Room> rooms = new ArrayList<>();
   public int endTime;
@@ -30,22 +24,12 @@ public class MapFactory extends HttpServlet {
   public int roomIndex;
   public JSONArray jsonRooms;
 
-  private static final long serialVersionUID = 1L;
-
   private JSONObject castToJSONObject(Object o) {
     return (JSONObject) o;
   }
 
   private JSONArray castToJSONArray(Object o) {
     return (JSONArray) o;
-  }
-
-  /**
-   * @see HttpServlet#HttpServlet()
-   */
-  public MapFactory() {
-    super();
-    // TODO Auto-generated constructor stub
   }
 
   @SuppressWarnings("unchecked")
@@ -56,7 +40,6 @@ public class MapFactory extends HttpServlet {
     JSONParser jsonParser = new JSONParser();
 
     File file = new File("maps.json");
-    this.name = file.getAbsolutePath();
     try (FileReader reader = new FileReader("map.json")) {
       // Read JSON file
       Object obj = jsonParser.parse(reader);
@@ -67,6 +50,7 @@ public class MapFactory extends HttpServlet {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       this.name = "FileNotFoundException";
+      this.name = file.getAbsolutePath();
     } catch (IOException e) {
       e.printStackTrace();
       this.name = "IOException";
@@ -122,36 +106,4 @@ public class MapFactory extends HttpServlet {
   public String toString() {
     return name;
   }
-
-
-  /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-   */
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    new MapFactory("Min jowa al get");
-    // Step 1: set content type
-    response.setContentType("text/html");
-
-    // Step 2: get the printwriter
-    PrintWriter out = response.getWriter();
-
-    // Step 3: generate the HTML content
-    out.println("<html><body>");
-
-    out.println("Map Name: "
-            + this.mapName);
-
-    out.println("</body></html>");
-
-  }
-
-  /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-   */
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // TODO Auto-generated method stub
-    doGet(request, response);
-  }
-
 }
