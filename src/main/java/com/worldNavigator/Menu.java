@@ -5,16 +5,21 @@ import java.util.Scanner;
 public class Menu {
   private Maps maps;
   private int map_index;
-  public PlayerControllerInterface player;
+  public PlayerController player;
   public PlayerModel playerModel;
   public PlayerViewer playerViewer;
+
+  public void setMaps(Maps maps) {
+    this.maps = maps;
+    this.map_chooser();
+  }
 
   public void setMaps(Maps maps, String sc) {
     this.maps = maps;
     this.map_chooser(sc);
   }
 
-  public void map_chooser(String sc) {
+  public void map_chooser() {
     System.out.println("Choose one of the available maps: ");
     int counter = 0;
     while (counter != this.maps.maps.size()) {
@@ -22,19 +27,22 @@ public class Menu {
       ++counter;
     }
     System.out.println("Enter map number");
-    this.map_index = Integer.parseInt(sc);//sc.nextInt();
+    Scanner sc = new Scanner(System.in);
+    this.map_index = sc.nextInt();
   }
 
-  public void preparePlayer(MapFactory map, PlayerViewer playerViewer) {
+  public void map_chooser(String sc) {
+    this.map_index = Integer.parseInt(sc);
+  }
+
+  public void preparePlayer(MapFactory map) {
     this.playerModel = new PlayerModel(map, this);
-    this.player = new PlayerControllerMaster(this.playerModel);
-//    this.playerViewer = new PlayerViewer(this.player, "Isa");
-    playerViewer.playerController = this.player;
-    playerViewer.setName("Isa");
+    this.player = new PlayerController(this.playerModel);
+    this.playerViewer = new PlayerViewer(this.player, "Isa");
   }
 
-  public void start(PlayerViewer playerViewer) throws IOException {
-    preparePlayer(this.maps.maps.get(this.map_index), playerViewer);
+  public void start() throws IOException {
+    preparePlayer(this.maps.maps.get(this.map_index));
     this.player.startGame();
   }
 
@@ -43,7 +51,7 @@ public class Menu {
     MapFactory new_map = this.maps.generate(mapName);
     this.maps.replace(new_map, this.map_index);
 
-    preparePlayer(this.maps.maps.get(0), this.playerViewer);
+    preparePlayer(this.maps.maps.get(0));
     player.startGame();
   }
 

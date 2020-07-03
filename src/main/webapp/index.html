@@ -2,9 +2,9 @@
 
 <body>
 
-<form action="StudentServlet" method="GET">
+<form action="MenuServer" method="GET">
 
-    Type your command: <input type="text" name="command"/>
+    Choose map: <input type="text" name="command"/>
 
     <br/><br/>
 
@@ -13,20 +13,6 @@
     <p>try4</p>
 
 </form>
-<script>
-    const launch = () => {
-       //first do the servlet DB stuff
-       jQuery.ajax({
-         type:"GET",
-         url : "StudentServlet",
-         data : {command: "l"},
-         success : function(data) {
-            $('p').text('success')
-         }
-       });
-    };
-    launch();
-</script>
 </body>
 
 </html>
