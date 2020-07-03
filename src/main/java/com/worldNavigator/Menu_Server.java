@@ -31,7 +31,6 @@ public class Menu_Server extends HttpServlet {
         // Step 2: get the printwriter
         PrintWriter out = response.getWriter();
 
-
         String command = request.getParameter("command");
 
         Maps maps = new Maps();
@@ -44,7 +43,7 @@ public class Menu_Server extends HttpServlet {
         // Step 3: generate the HTML content
         out.println("<html><body>");
 
-        out.println("Name is: "
+        out.println("Player Name is: "
                 + menu.playerViewer.getName());
         out.println("<form action=\"CommandsServer\" method=\"GET\">\n" +
                 "\n" +

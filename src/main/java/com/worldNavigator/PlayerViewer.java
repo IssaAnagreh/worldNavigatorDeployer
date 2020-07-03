@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//@WebServlet("/MenuServer")
+@WebServlet("/CommandsServer")
 public class PlayerViewer extends HttpServlet implements Observer {
     public PlayerController playerController;
     private String name;
@@ -35,21 +35,20 @@ public class PlayerViewer extends HttpServlet implements Observer {
     DataOutputStream toServer = null;
     DataInputStream fromServer = null;
 
-    public void serverCommands() {
-        try {
-            Socket s = new Socket("localhost", 8080);
-            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-            while (true) {
-                this.playerController.playerModel.notify_player("Enter next command: ");
-                Scanner command = new Scanner(System.in);
-                String cmd = command.next();
-                dout.writeUTF(cmd);
-                dout.flush();
-                this.playerController.use_method(cmd.trim());
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+    public void serverCommands(String cmd) {
+//        try {
+//            Socket s = new Socket("localhost", 8080);
+//            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+//            while (true) {
+//                this.playerController.playerModel.notify_player("Enter next command: ");
+//                dout.writeUTF(cmd);
+//                dout.flush();
+//                this.playerController.use_method(cmd.trim());
+//            }
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+        this.playerController.use_method(cmd.trim());
     }
 
     public PlayerViewer(PlayerController playerController, String name) {
@@ -125,18 +124,29 @@ public class PlayerViewer extends HttpServlet implements Observer {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        new MapFactory("Min jowa al get");
         // Step 1: set content type
         response.setContentType("text/html");
 
         // Step 2: get the printwriter
         PrintWriter out = response.getWriter();
 
-        // Step 3: generate the HTML content
+        String command = request.getParameter("command");
+
         out.println("<html><body>");
 
-        out.println("Map Name: "
-                + this.name);
+        out.println("Player Name is: "
+                + this.getName());
+        out.println("<form action=\"CommandsServer\" method=\"GET\">\n" +
+                "\n" +
+                "    Type your command: <input type=\"text\" name=\"command\"/>\n" +
+                "\n" +
+                "    <br/><br/>\n" +
+                "\n" +
+                "    <input type=\"submit\" value=\"Submit\"/>\n" +
+                "\n" +
+                "    <p>try4</p>\n" +
+                "\n" +
+                "</form>");
 
         out.println("</body></html>");
 
