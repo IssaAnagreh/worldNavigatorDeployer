@@ -2,14 +2,6 @@ package com.worldNavigator;
 
 import java.io.*;
 import java.net.*;
-import java.util.Date;
-
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
 
 public class Server {
 
