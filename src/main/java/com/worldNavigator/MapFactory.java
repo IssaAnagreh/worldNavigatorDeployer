@@ -19,11 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/MenuServer")
 public class MapFactory extends HttpServlet {
-  private String name = "empty";
+  private String name = "name empty";
   public List<Room> rooms = new ArrayList<>();
   public int endTime;
   private int room_counter = 0;
-  public String mapName;
+  public String mapName = "mapName empty";
   public Map<String, Object> contents;
   public String location;
   public String orientation;
