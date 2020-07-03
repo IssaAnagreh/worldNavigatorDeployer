@@ -138,14 +138,14 @@ public class PlayerViewer extends HttpServlet implements Observer {
 
         String command = request.getParameter("command");
 
-        this.serverCommands(command);
+//        this.serverCommands(command);
 
         out.println("<html><body>");
 
         out.println("Player Name is: "
                 + this.getName());
         out.println("Message: "
-                + this.getName());
+                + command);
         out.println("<form action=\"CommandsServer\" method=\"GET\">\n" +
                 "\n" +
                 "    Type your command: <input type=\"text\" name=\"command\"/>\n" +
