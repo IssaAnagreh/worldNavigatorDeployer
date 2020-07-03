@@ -57,7 +57,7 @@ public class PlayerModel extends Observable {
   public void startGame() {
     this.playing = true;
     this.timer = new GameTimer(this.map.endTime, this);
-//    this.br = new BufferedReader(new InputStreamReader(System.in));
+    this.br = new BufferedReader(new InputStreamReader(System.in));
   }
 
   public void addToContents(String contentType, Object newContent) {

@@ -3,16 +3,13 @@ package com.worldNavigator;
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
 
-        new Thread( () -> new Server()).start();
+  public static void main(String[] args) throws IOException {
+    Maps maps = new Maps();
+    maps.addMap("map.json");
 
-        Maps maps = new Maps();
-        maps.addMap("map.json");
-
-        Menu menu = new Menu();
-        menu.setMaps(maps);
-        menu.start();
-
-    }
+    Menu menu = new Menu();
+    menu.setMaps(maps, "0");
+    menu.start(new PlayerViewer());
+  }
 }
