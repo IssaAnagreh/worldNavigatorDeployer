@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/MenuServer")
+//@WebServlet("/MenuServer")
 public class Menu_Server extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
