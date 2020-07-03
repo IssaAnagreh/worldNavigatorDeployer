@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/CommandsServer")
+//@WebServlet("/CommandsServer")
 public class PlayerViewer extends HttpServlet implements Observer {
     public PlayerController playerController;
     private String name;
