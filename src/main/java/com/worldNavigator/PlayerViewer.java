@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 public class PlayerViewer extends HttpServlet implements Observer {
     public PlayerController playerController;
     private String name;
+    private String msg = "empty";
 
     private static final long serialVersionUID = 1L;
 
@@ -36,33 +37,38 @@ public class PlayerViewer extends HttpServlet implements Observer {
     DataInputStream fromServer = null;
 
     public void serverCommands(String cmd) {
-//        try {
-//            Socket s = new Socket("localhost", 8080);
-//            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-//            while (true) {
-//                this.playerController.playerModel.notify_player("Enter next command: ");
-//                dout.writeUTF(cmd);
-//                dout.flush();
-//                this.playerController.use_method(cmd.trim());
-//            }
-//        } catch (Exception e) {
-//            System.out.println(e);
-//        }
         this.playerController.use_method(cmd.trim());
     }
 
+    public void serverCommands() {
+        try {
+            Socket s = new Socket("localhost", 8080);
+            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+            while (true) {
+                this.playerController.playerModel.notify_player("Enter next command: ");
+                Scanner command = new Scanner(System.in);
+                String cmd = command.next();
+                dout.writeUTF(cmd);
+                dout.flush();
+                this.playerController.use_method(cmd.trim());
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
     public PlayerViewer(PlayerController playerController, String name) {
         super();
         this.playerController = playerController;
         this.name = name;
         this.playerController.subscribe(this);
-        this.serverCommands();
+//        this.serverCommands();
     }
 
     @Override
     public void update(Observable o, Object arg) {
         PlayerModel playerModel = (PlayerModel) o;
         String msg = (String) arg;
+        this.msg = msg;
         if (playerModel.consoleColor == null) {
             if (playerModel.isInline) {
                 System.out.print(msg);
@@ -132,9 +138,13 @@ public class PlayerViewer extends HttpServlet implements Observer {
 
         String command = request.getParameter("command");
 
+        this.serverCommands(command);
+
         out.println("<html><body>");
 
         out.println("Player Name is: "
+                + this.getName());
+        out.println("Message: "
                 + this.getName());
         out.println("<form action=\"CommandsServer\" method=\"GET\">\n" +
                 "\n" +
