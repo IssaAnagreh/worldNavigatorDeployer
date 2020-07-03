@@ -128,6 +128,7 @@ public class MapFactory extends HttpServlet {
    */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+    new MapFactory("Min jowa al get");
     // Step 1: set content type
     response.setContentType("text/html");
 
