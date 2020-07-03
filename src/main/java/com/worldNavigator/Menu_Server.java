@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-//@WebServlet("/MenuServer")
+@WebServlet("/MenuServer")
 public class Menu_Server extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -44,8 +44,8 @@ public class Menu_Server extends HttpServlet {
         // Step 3: generate the HTML content
         out.println("<html><body>");
 
-        out.println("Command is: "
-                + command);
+        out.println("Name is: "
+                + menu.playerViewer.getName());
         out.println("<form action=\"CommandsServer\" method=\"GET\">\n" +
                 "\n" +
                 "    Type your command: <input type=\"text\" name=\"command\"/>\n" +
