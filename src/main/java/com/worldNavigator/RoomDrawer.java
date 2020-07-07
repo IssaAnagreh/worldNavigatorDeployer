@@ -5,10 +5,9 @@ public class RoomDrawer {
   private HashMap<Integer, String> mapStrings = new HashMap<>();
   private String location;
   private Room room;
-  private PlayerModel playerModel;
+  public String roomDraw;
 
-  public RoomDrawer(String location, Room room, PlayerModel playerModel) {
-    this.playerModel = playerModel;
+  public RoomDrawer(String location, Room room) {
     if (room.getIsLit()) {
       this.mapStrings.put(0, "a");
       this.mapStrings.put(1, "b");
@@ -19,18 +18,19 @@ public class RoomDrawer {
       this.location = location;
       this.room = room;
 
-      raw(1);
-      raw(2);
-      raw(3);
-      raw(4);
-      raw(5);
+      this.roomDraw = row(1);
+      this.roomDraw += "<br>" + row(2);
+      this.roomDraw += "<br>" + row(3);
+      this.roomDraw += "<br>" + row(4);
+      this.roomDraw += "<br>" + row(5);
     }
   }
 
-  private void raw(int num) {
+  private String row(int num) {
+    String row = "";
     for (int i = 0; i < 5; ++i) {
       if (this.location.equals(mapStrings.get(i) + num)) {
-        playerModel.inLine_notify_player("\u29EF\u29EF ");
+        row += "\u29EF\u29EF   ";
       } else {
         boolean item = false;
         for (Wall wall : this.room.walls.values()) {
@@ -41,9 +41,9 @@ public class RoomDrawer {
                     .equals("Nothing in this location");
           }
         }
-        playerModel.inLine_notify_player(!item ? mapStrings.get(i) + num + " " : "■■ ");
+        row += !item ? mapStrings.get(i) + num + "   " : "■■   ";
       }
     }
-    playerModel.notify_player("");
+    return row;
   }
 }

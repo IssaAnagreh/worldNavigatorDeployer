@@ -38,9 +38,10 @@ public class MapFactory {
     this.name = "MapFactory";
     // JSON parser object to parse read file
     JSONParser jsonParser = new JSONParser();
-
-    File file = new File("maps.json");
-    try (FileReader reader = new FileReader("map.json")) {
+//
+    File file = new File("map.json");
+    System.out.println("file.getAbsolutePath(): "+file.getAbsolutePath());
+    try (FileReader reader = new FileReader(file)) {
       // Read JSON file
       Object obj = jsonParser.parse(reader);
 
@@ -50,12 +51,12 @@ public class MapFactory {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       this.name = "FileNotFoundException";
-      this.name = file.getAbsolutePath();
     } catch (IOException e) {
       e.printStackTrace();
       this.name = "IOException";
     } catch (ParseException e) {
       e.printStackTrace();
+      System.out.println("ParseException");
       this.name = "ParseException";
     }
   }

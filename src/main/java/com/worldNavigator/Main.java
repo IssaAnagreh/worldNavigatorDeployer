@@ -10,7 +10,7 @@ public class Main {
         Menu menu = new Menu();
         menu.setMaps(maps);
 
-        new Thread( () -> new Server(menu)).start();
+//        new Thread( () -> new Server()).start();
 
         menu.start();
 

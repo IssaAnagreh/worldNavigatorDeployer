@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 public class PlayerViewer extends HttpServlet implements Observer {
     public PlayerController playerController;
     private String name;
-    private String msg = "empty";
+    public String msg = "empty";
 
     private static final long serialVersionUID = 1L;
 

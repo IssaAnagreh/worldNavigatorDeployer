@@ -6,7 +6,8 @@ public class Maps {
   public List<MapFactory> maps = new ArrayList<>();
 
   public MapFactory generate(String json) {
-    return new MapFactory(json);
+    MapFactory mapFactory = new MapFactory(json);
+    return mapFactory;
   }
 
   public void addMap(String json) {
