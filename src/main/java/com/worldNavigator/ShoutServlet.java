@@ -10,25 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = {"/shoutServlet"})
 public class ShoutServlet extends HttpServlet {
-    Menu menu;
-    String user = "";
+    PlayerViewer user;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (menu == null) {
-            Maps maps = new Maps();
-            maps.addMap("map.json");
-            this.menu = new Menu();
-            this.menu.setMaps(maps, "0");
-            this.menu.start();
-        }
-        if (request.getAttribute("varName") != null) this.user = request.getAttribute("varName").toString();
+        if (request.getAttribute("varName") != null) this.user = (PlayerViewer) request.getAttribute("varName");
 
         String message = request.getParameter("message");
         if (message != null) {
-            if (this.menu.playerModel.isPlaying()) this.menu.playerViewer.playerController.use_method(message.trim());
+            this.user.playerController.use_method(message.trim());
 
-            String htmlMessage = "<p><b>" + this.user + "</b><br/>" + this.menu.playerViewer.msg + "</p>";
+            String htmlMessage = "<p><b>" + this.user.getName() + "</b><br/>" + this.user.msg + "</p>";
             ServletContext sc = request.getServletContext();
             if (sc.getAttribute("messages") == null) {
                 sc.setAttribute("messages", htmlMessage);
