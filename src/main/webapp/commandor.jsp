@@ -64,7 +64,7 @@
     </table>
     <table>
         <tr>
-            <td>Your name:</td>
+            <td>Change your name:</td>
             <td><input type="text" id="name" name="name"/></td>
             <td><input type = "hidden" name="sessionid" value="<%=session.getId() %>"></td>
         </tr>
