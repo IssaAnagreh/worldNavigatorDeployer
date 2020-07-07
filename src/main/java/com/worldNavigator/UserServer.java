@@ -12,6 +12,7 @@ import java.io.IOException;
 public class UserServer extends HttpServlet {
     Menu menu;
     PlayerViewer[] users = new PlayerViewer[6];
+    String[] usersId = new String[6];
     int count = 0;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -21,9 +22,8 @@ public class UserServer extends HttpServlet {
             maps.addMap("map.json");
             this.menu = new Menu();
             this.menu.setMaps(maps, "0");
-            this.menu.start();
         }
-        getServletContext().getRequestDispatcher("/user.jsp").forward(request,response);
+        getServletContext().getRequestDispatcher("/commandor.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -33,14 +33,16 @@ public class UserServer extends HttpServlet {
             maps.addMap("map.json");
             this.menu = new Menu();
             this.menu.setMaps(maps, "0");
-            this.menu.start();
         }
-        System.out.println("this.menu "+this.menu.toString());
+        System.out.println("request.getParameter(name): " + request.getParameter("name"));
+        System.out.println("request.getParameter(sessionid): " + request.getParameter("sessionid"));
         String name = request.getParameter("name");
-        PlayerViewer player = new PlayerViewer(this.menu.player, name);
-        this.users[count] = player;
+        this.menu.start(name);
+        this.usersId[count] = request.getParameter("sessionid");
+        this.users[count++] = menu.playerViewer;
 
-        request.setAttribute("varName", player);
-        getServletContext().getRequestDispatcher("/shoutServlet").forward(request,response);
+        request.setAttribute("varNames", this.users);
+        request.setAttribute("varIds", this.usersId);
+        getServletContext().getRequestDispatcher("/shoutServlet").forward(request, response);
     }
 }

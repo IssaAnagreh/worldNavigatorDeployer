@@ -35,23 +35,23 @@ public class Menu {
     this.map_index = Integer.parseInt(sc);
   }
 
-  public void preparePlayer(MapFactory map) {
+  public void preparePlayer(MapFactory map, String name) {
     this.playerModel = new PlayerModel(map, this);
     this.player = new PlayerController(this.playerModel);
-    this.playerViewer = new PlayerViewer(this.player, "Isa");
+    this.playerViewer = new PlayerViewer(this.player, name);
   }
 
-  public void start() throws IOException {
-    preparePlayer(this.maps.maps.get(this.map_index));
-    this.player.startGame();
+  public void start(String name) throws IOException {
+    preparePlayer(this.maps.maps.get(this.map_index), name);
+//    this.player.startGame();
   }
 
-  public void restart() throws IOException {
+  public void restart(String name) throws IOException {
     String mapName = this.maps.maps.get(this.map_index).mapName;
     MapFactory new_map = this.maps.generate(mapName);
     this.maps.replace(new_map, this.map_index);
 
-    preparePlayer(this.maps.maps.get(0));
+    preparePlayer(this.maps.maps.get(0), name);
     player.startGame();
   }
 

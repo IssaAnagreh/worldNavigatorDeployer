@@ -24,7 +24,6 @@
     visitCount = visitCount + 1;
     userID = (String)session.getAttribute(userIDKey);
     session.setAttribute(visitCountKey,  visitCount);
-    String id = session.getId();
 %>
 
 <!DOCTYPE html>
@@ -35,8 +34,8 @@
 </head>
 <body>
 <h1>WORLD NAVIGATOR!</h1>
-<h2>User</h2>
-<form method="POST" action="user">
+<h2>Commandor</h2>
+<form method="POST" action="shoutServlet">
     <table border = "1" align = "center">
         <tr bgcolor = "#949494">
             <th>Session info</th>
@@ -67,14 +66,43 @@
         <tr>
             <td>Your name:</td>
             <td><input type="text" id="name" name="name"/></td>
-        </tr>
-        <tr>
             <td><input type = "hidden" name="sessionid" value="<%=session.getId() %>"></td>
-            <td><input type="submit" value="SHOUT"/></td>
+        </tr>
+        <%--        <tr>--%>
+        <%--            <td>Your command:</td>--%>
+        <%--            <td><input type="text" id="message" name="message" /></td>--%>
+        <%--        </tr>--%>
+        <%--        <tr>--%>
+        <%--            <td><input type="submit" value="Command" /></td>--%>
+        <%--        </tr>--%>
+    </table>
+    <table>
+        <tr>
+            <td><input type="submit" name="left" value="Left"/></td>
+            <td><input type="submit" name="right" value="Right"/></td>
+            <td><input type="submit" name="forward" value="Forward"/></td>
+            <td><input type="submit" name="backward" value="Backward"/></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td><input type="submit" name="check" value="Check"/></td>
+            <td><input type="submit" name="key" value="Use Key"/></td>
+            <td><input type="submit" name="open" value="Open"/></td>
+            <td><input type="submit" name="light" value="Switch Light"/></td>
+            <td><input type="submit" name="flash" value="Use Flash Light"/></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td><input type="submit" name="look" value="Look"/></td>
+            <td><input type="submit" name="room" value="Room"/></td>
+            <td><input type="submit" name="location" value="Location"/></td>
+            <td><input type="submit" name="items" value="My items"/></td>
         </tr>
     </table>
 </form>
-<h2> Current Shouts </h2>
+<h2> Current Commands </h2>
 <div id="content">
     <% if (application.getAttribute("messages") != null) {%>
     <%= application.getAttribute("messages")%>
@@ -82,21 +110,23 @@
 </div>
 <script>
     var messagesWaiting = false;
-    function getMessages(){
-        if(!messagesWaiting){
+
+    function getMessages() {
+        if (!messagesWaiting) {
             messagesWaiting = true;
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange=function(){
-                if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     messagesWaiting = false;
                     var contentElement = document.getElementById("content");
                     contentElement.innerHTML = xmlhttp.responseText + contentElement.innerHTML;
                 }
             }
-            xmlhttp.open("GET", "shoutServlet?t="+new Date(), true);
+            xmlhttp.open("GET", "shoutServlet?t=" + new Date(), true);
             xmlhttp.send();
         }
     }
+
     setInterval(getMessages, 1000);
 </script>
 </body>

@@ -12,7 +12,7 @@ public class Main {
 
 //        new Thread( () -> new Server()).start();
 
-        menu.start();
+        menu.start("Main Player");
 
     }
 }
