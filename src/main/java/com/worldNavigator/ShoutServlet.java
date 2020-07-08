@@ -62,9 +62,11 @@ public class ShoutServlet extends HttpServlet {
                 message = "items";
             }
             this.user.playerController.use_method(message.trim());
+//            String finalMessage = message;
+//            new Thread( () -> this.user.playerController.use_method(finalMessage.trim()));
             output = this.user.msg;
         } else {
-            output = "Game didn't start yet, " + Arrays.stream(this.users).filter(Objects::nonNull).count() + " number of players available, game must have " + this.users.length + " players";
+            output = "Game didn't start yet, " + Arrays.stream(this.users).filter(Objects::nonNull).count() + " players available, game must have " + this.users.length + " players";
         }
 
 

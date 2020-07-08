@@ -53,7 +53,7 @@ public class UserServer extends HttpServlet {
             this.users[count++] = menu.playerViewer;
 
             System.out.println("count: " + count);
-            if (count == 3) {
+            if (count == 1) {
                 for (PlayerViewer user : this.users) {
                     if (user != null) {
                         user.playerController.startGame();
