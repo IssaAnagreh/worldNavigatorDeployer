@@ -19,7 +19,6 @@
         session.setAttribute(userIDKey, userID);
         session.setAttribute(visitCountKey,  visitCount);
     }
-    System.out.println("session "+session.getAttribute(visitCountKey));
     visitCount = (int) session.getAttribute(visitCountKey);
     visitCount = visitCount + 1;
     userID = (String)session.getAttribute(userIDKey);
@@ -64,17 +63,10 @@
     </table>
     <table>
         <tr>
-            <td>Your name:</td>
+            <td>Change your name:</td>
             <td><input type="text" id="name" name="name"/></td>
             <td><input type = "hidden" name="sessionid" value="<%=session.getId() %>"></td>
         </tr>
-        <%--        <tr>--%>
-        <%--            <td>Your command:</td>--%>
-        <%--            <td><input type="text" id="message" name="message" /></td>--%>
-        <%--        </tr>--%>
-        <%--        <tr>--%>
-        <%--            <td><input type="submit" value="Command" /></td>--%>
-        <%--        </tr>--%>
     </table>
     <table>
         <tr>

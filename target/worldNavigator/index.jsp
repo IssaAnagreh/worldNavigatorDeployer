@@ -19,7 +19,6 @@
         session.setAttribute(userIDKey, userID);
         session.setAttribute(visitCountKey,  visitCount);
     }
-    System.out.println("session "+session.getAttribute(visitCountKey));
     visitCount = (int) session.getAttribute(visitCountKey);
     visitCount = visitCount + 1;
     userID = (String)session.getAttribute(userIDKey);

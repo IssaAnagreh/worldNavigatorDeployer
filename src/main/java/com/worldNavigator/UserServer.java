@@ -27,22 +27,43 @@ public class UserServer extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (menu == null) {
-            System.out.println("menu is null from POST");
-            Maps maps = new Maps();
-            maps.addMap("map.json");
-            this.menu = new Menu();
-            this.menu.setMaps(maps, "0");
+        boolean repeated = false;
+        for (String id : this.usersId) {
+            if (id != null) {
+                if (id.equals(request.getParameter("sessionid"))) {
+                    repeated = true;
+                }
+            }
         }
-        System.out.println("request.getParameter(name): " + request.getParameter("name"));
-        System.out.println("request.getParameter(sessionid): " + request.getParameter("sessionid"));
-        String name = request.getParameter("name");
-        this.menu.start(name);
-        this.usersId[count] = request.getParameter("sessionid");
-        this.users[count++] = menu.playerViewer;
+        if (repeated) {
+//            getServletContext().getRequestDispatcher("/user.jsp").forward(request, response);
+            response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/index.jsp"));
+        } else {
+            if (menu == null) {
+                System.out.println("menu is null from POST");
+                Maps maps = new Maps();
+                maps.addMap("map.json");
+                this.menu = new Menu();
+                this.menu.setMaps(maps, "0");
+            }
 
-        request.setAttribute("varNames", this.users);
-        request.setAttribute("varIds", this.usersId);
-        getServletContext().getRequestDispatcher("/shoutServlet").forward(request, response);
+            String name = request.getParameter("name");
+            this.menu.start(name);
+            this.usersId[count] = request.getParameter("sessionid");
+            this.users[count++] = menu.playerViewer;
+
+            System.out.println("count: " + count);
+            if (count == 3) {
+                for (PlayerViewer user : this.users) {
+                    if (user != null) {
+                        user.playerController.startGame();
+                    }
+                }
+            }
+
+            request.setAttribute("varNames", this.users);
+            request.setAttribute("varIds", this.usersId);
+            getServletContext().getRequestDispatcher("/shoutServlet").forward(request, response);
+        }
     }
 }

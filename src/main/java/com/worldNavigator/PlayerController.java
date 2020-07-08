@@ -36,7 +36,7 @@ public class PlayerController implements PlayerControllerInterface {
     }
 
     public void startGame() throws IOException {
-//        this.playerModel.startGame();
+        this.playerModel.startGame();
 //        while (this.playerModel.isPlaying()) {
 //            this.playerModel.notify_player("Enter your next command: ");
 //            String command = this.playerModel.br.readLine();

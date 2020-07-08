@@ -42,6 +42,7 @@ public class Menu {
   }
 
   public void start(String name) throws IOException {
+//    new Thread( () -> preparePlayer(this.maps.maps.get(this.map_index), name));
     preparePlayer(this.maps.maps.get(this.map_index), name);
 //    this.player.startGame();
   }

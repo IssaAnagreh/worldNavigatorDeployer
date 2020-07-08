@@ -40,7 +40,6 @@ public class MapFactory {
     JSONParser jsonParser = new JSONParser();
 //
     File file = new File("map.json");
-    System.out.println("file.getAbsolutePath(): "+file.getAbsolutePath());
     try (FileReader reader = new FileReader(file)) {
       // Read JSON file
       Object obj = jsonParser.parse(reader);
@@ -50,6 +49,7 @@ public class MapFactory {
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
+      System.out.println("file.getAbsolutePath(): "+file.getAbsolutePath());
       this.name = "FileNotFoundException";
     } catch (IOException e) {
       e.printStackTrace();
