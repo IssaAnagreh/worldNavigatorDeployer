@@ -16,8 +16,7 @@ public class MapFactory {
   public String name;
   public List<Room> rooms = new ArrayList<>();
   public int endTime;
-//  public String mapName;
-  public String location;
+  public String mapName;
   public JSONArray jsonRooms;
   public JSONObject jsonMap;
   private int roomsCount;
@@ -32,7 +31,7 @@ public class MapFactory {
 
   @SuppressWarnings("unchecked")
   public MapFactory(String mapName) {
-//    this.name = "MapFactory";
+    this.mapName = "MapFactory";
 
     JSONParser jsonParser = new JSONParser();
 

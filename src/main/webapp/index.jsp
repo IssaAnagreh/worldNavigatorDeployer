@@ -7,7 +7,7 @@
 
     MapFactory mapFactory = new MapFactory("map.json");
     // Get last access time of this Webpage.
-    String lastAccessTime = mapFactory.location;
+    String lastAccessTime = mapFactory.name;
 
     String title = "Welcome Back to my website";
     int visitCount = 0;
