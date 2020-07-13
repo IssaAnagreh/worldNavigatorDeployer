@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ page import = "java.io.*,java.util.*" %>
+<%@ page import="com.worldNavigator.MapFactory" %>
 <%
     // Get session creation time.
     Date createTime = new Date(session.getCreationTime());
@@ -19,8 +20,10 @@
     }
     visitCount = (int) session.getAttribute(visitCountKey);
     visitCount = visitCount + 1;
-    session.setAttribute(visitCountKey,  visitCount);
+    MapFactory mapFactory = new MapFactory("map.json");
+    session.setAttribute(visitCountKey,  mapFactory.mapName);
     String id = session.getId();
+
 %>
 
 <!DOCTYPE html>

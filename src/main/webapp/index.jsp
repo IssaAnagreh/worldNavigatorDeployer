@@ -1,11 +1,13 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ page import = "java.io.*,java.util.*" %>
+<%@ page import="com.worldNavigator.MapFactory" %>
 <%
     // Get session creation time.
     Date createTime = new Date(session.getCreationTime());
 
+    MapFactory mapFactory = new MapFactory("map.json");
     // Get last access time of this Webpage.
-    Date lastAccessTime = new Date(session.getLastAccessedTime());
+    String lastAccessTime = mapFactory.mapName;
 
     String title = "Welcome Back to my website";
     int visitCount = 0;
