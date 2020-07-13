@@ -11,7 +11,7 @@ public class Game {
     public List<PlayerViewer> playerViewers = new ArrayList<>();
     public List<String> playersSessions = new ArrayList<>();
     private Maps maps;
-    private int map_index;
+    private int map_index = 0;
     public boolean isStarted = false;
 
     public Game() {
