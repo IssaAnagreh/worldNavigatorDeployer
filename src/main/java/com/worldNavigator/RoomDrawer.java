@@ -29,8 +29,9 @@ public class RoomDrawer {
   private String row(int num) {
     String row = "";
     for (int i = 0; i < 5; ++i) {
-      if (this.location.equals(mapStrings.get(i) + num)) {
-        row += "\u29EF\u29EF   ";
+      if (this.location.equals(this.mapStrings.get(i) + num)) {
+//        row += "\u29EF\u29EF   ";
+        row += "□□ ";
       } else {
         boolean item = false;
         for (Wall wall : this.room.walls.values()) {

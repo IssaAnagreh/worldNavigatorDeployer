@@ -11,17 +11,14 @@
     int visitCount = 0;
     String visitCountKey = new String("visitCount");
     String userIDKey = new String("userID");
-    String userID = new String("ABCD");
 
     // Check if this is new comer on your Webpage.
     if (session.isNew() || session.getAttribute(visitCountKey) == null){
         title = "Welcome to my website";
-        session.setAttribute(userIDKey, userID);
         session.setAttribute(visitCountKey,  visitCount);
     }
     visitCount = (int) session.getAttribute(visitCountKey);
     visitCount = visitCount + 1;
-    userID = (String)session.getAttribute(userIDKey);
     session.setAttribute(visitCountKey,  visitCount);
     String id = session.getId();
 %>
@@ -54,10 +51,6 @@
             <td><% out.print(lastAccessTime); %></td>
         </tr>
         <tr>
-            <td>User ID</td>
-            <td><% out.print(userID); %></td>
-        </tr>
-        <tr>
             <td>Number of visits</td>
             <td><% out.print(visitCount); %></td>
         </tr>
@@ -68,8 +61,8 @@
             <td><input type="text" id="name" name="name"/></td>
         </tr>
         <tr>
-            <td><input type = "hidden" name="sessionid" value="<%=session.getId() %>"></td>
-            <td><input type="submit" value="SHOUT"/></td>
+            <td><input type = "hidden" name="sessionId" value="<%=session.getId() %>"></td>
+            <td><input style="padding-left: 15px; padding-right: 15px;" type="submit" value="Join"/></td>
         </tr>
     </table>
 </form>
@@ -92,11 +85,11 @@
                     contentElement.innerHTML = xmlhttp.responseText + contentElement.innerHTML;
                 }
             }
-            xmlhttp.open("GET", "shoutServlet?t="+new Date(), true);
+            xmlhttp.open("GET", "command?t="+new Date(), true);
             xmlhttp.send();
         }
     }
-    setInterval(getMessages, 1000);
+    // setInterval(getMessages, 1000);
 </script>
 </body>
 </html>

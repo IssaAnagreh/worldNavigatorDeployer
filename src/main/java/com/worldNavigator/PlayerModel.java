@@ -6,30 +6,38 @@ import java.util.*;
 
 public class PlayerModel extends Observable {
     private final MapFactory map;
-    //  private List<Room> rooms;
-//  private Room room;
-//  private Wall wall;
+    public String name;
     private int roomIndex;
-    private Map<String, Object> contents;
+    public Map<String, Object> contents;
     private String orientation;
     private String location;
     public GameTimer timer;
-    public Menu menu;
-    private boolean playing;
+    public Game game;
+    private boolean isPlaying;
     static BufferedReader br;
     public Boolean isInline = false;
     public ConsoleColors consoleColor;
+    private ContentManager contentManager;
+    public Map<String, Object> fight = new HashMap<>();
+    boolean winner = false;
 
-    public PlayerModel(MapFactory map, Menu menu) {
+    public PlayerModel(MapFactory map, Game game, String name) {
+        this.fight.put("isFighting", false);
+        this.fight.put("against", null);
         this.map = map;
-//    this.map.rooms = map.rooms;
-        this.menu = menu;
-        this.contents = map.contents;
-        this.location = map.location;
-        this.orientation = map.orientation;
-        this.roomIndex = map.roomIndex;
-//    this.room = this.map.rooms.get(this.roomIndex);
-//    this.wall = this.room.walls.get(this.orientation);
+        this.game = game;
+        this.name = name;
+        this.contentManager = new ContentManager();
+        String player_string = "player";
+        HashMap<String, Object> player_details = (HashMap) map.jsonMap.get(player_string);
+        this.contentManager.managePlayer(player_details);
+        this.contents = this.contentManager.getContents();
+        this.location = "b5";
+        this.orientation = "south";
+        this.roomIndex =
+            player_details.get("roomIndex") != null
+                ? 1//(0 + (int)(Math.random() * ((1 - 0) + 1)))//Integer.parseInt(player_details.get("roomIndex").toString())
+                : 0;
     }
 
     public void notify_player(String msg) {
@@ -44,21 +52,18 @@ public class PlayerModel extends Observable {
         this.consoleColor = null;
     }
 
-    public void inLine_notify_player(String msg) {
-        this.isInline = true;
-        this.setChanged();
-        notifyObservers(msg);
-        this.isInline = false;
-    }
-
     private int castToInt(Object o) {
         return (int) o;
     }
 
     public void startGame() {
-        this.playing = true;
+        this.isPlaying = true;
         this.timer = new GameTimer(this.map.endTime, this);
 //    this.br = new BufferedReader(new InputStreamReader(System.in));
+    }
+
+    public int power() {
+        return this.contentManager.calculatePower();
     }
 
     public void addToContents(String contentType, Object newContent) {
@@ -98,11 +103,12 @@ public class PlayerModel extends Observable {
     }
 
     public boolean isPlaying() {
-        return playing;
+        return isPlaying;
     }
 
     public void myItems() {
-        notify_player(this.contents.toString());
+        System.out.println("name: " + this.name);
+        notify_player(this.contents == null ? "Nothing" : this.contents.toString());
     }
 
     public void move(MoveTypes move) {
@@ -118,18 +124,14 @@ public class PlayerModel extends Observable {
         int index = this.roomIndex + 1;
         notify_player("You are in: " + new_location.toString() + " in room number: " + index, ConsoleColors.blue);
         this.location = new_location.toString();
-//    this.room = this.map.rooms.get(this.roomIndex);
-//    this.wall = this.map.rooms.get(this.roomIndex).walls.get(this.orientation);
     }
 
     public void rotateLeft() {
         this.orientation = new Rotate(this.orientation, this).left();
-//    this.wall = room.walls.get(this.orientation);
     }
 
     public void rotateRight() {
         this.orientation = new Rotate(this.orientation, this).right();
-//    this.wall = room.walls.get(this.orientation);
     }
 
     public void look() {
@@ -152,6 +154,7 @@ public class PlayerModel extends Observable {
     public void acquire_items() {
         Item item = this.map.rooms.get(this.roomIndex).walls.get(this.orientation).itemsFactory.getItem(this.location);
         if (!item.toString().equals("Space")) {
+            System.out.println("player name: " + name);
             item.applyAcquire(this.location, this);
         }
     }
@@ -169,9 +172,9 @@ public class PlayerModel extends Observable {
                 } else {
                     Item item = this.map.rooms.get(this.roomIndex).walls.get(this.orientation).itemsFactory.getItem(this.location);
                     print =
-                            item.toString().equals("Space")
-                                    ? "Opening nothing"
-                                    : item.applyUseKey(castToKeyCheckerArrayList(this.contents.get("keys")));
+                        item.toString().equals("Space")
+                            ? "Opening nothing"
+                            : item.applyUseKey(castToKeyCheckerArrayList(this.contents.get("keys")));
                 }
             } else {
                 print = "You have no keys";
@@ -190,7 +193,7 @@ public class PlayerModel extends Observable {
             masterKeysList.add(new MasterKey());
             Item item = this.map.rooms.get(this.roomIndex).walls.get(this.orientation).itemsFactory.getItem(this.location);
             print =
-                    item.toString().equals("Space") ? "Opening nothing" : item.applyUseKey(masterKeysList);
+                item.toString().equals("Space") ? "Opening nothing" : item.applyUseKey(masterKeysList);
             this.contents.put(masterKeysString, castToInt(this.contents.get(masterKeysString)) - 1);
         } else {
             print = "You have no master keys";
@@ -226,6 +229,7 @@ public class PlayerModel extends Observable {
         for (Room room_candidate : this.map.rooms) {
             if (room_candidate.ROOM_NAME.equals(nextRoom)) {
                 this.roomIndex = this.map.rooms.indexOf(room_candidate);
+                room_candidate.addOccupant(this.game.whoIsIt_name(this.name), this.game);
                 this.nextRoom_move();
                 isOpened = true;
             }
@@ -294,7 +298,7 @@ public class PlayerModel extends Observable {
         }
         if (castToInt(this.contents.get("flashLights")) > 0) {
             this.contents.put(
-                    "flashLights", this.map.rooms.get(this.roomIndex).useFlashLight(castToInt(this.contents.get("flashLights")), this));
+                "flashLights", this.map.rooms.get(this.roomIndex).useFlashLight(castToInt(this.contents.get("flashLights")), this));
         } else {
             notify_player("You have no flashLights", ConsoleColors.red);
         }

@@ -1,69 +1,59 @@
 package com.worldNavigator;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "UserServer", urlPatterns = {"/user"})
 public class UserServer extends HttpServlet {
-    Menu menu;
-    PlayerViewer[] users = new PlayerViewer[6];
-    String[] usersId = new String[6];
-    int count = 0;
+    Map<Integer, Game> games = new HashMap<>();
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (menu == null) {
-            System.out.println("menu is null from GET");
-            Maps maps = new Maps();
-            maps.addMap("map.json");
-            this.menu = new Menu();
-            this.menu.setMaps(maps, "0");
-        }
-        getServletContext().getRequestDispatcher("/commandor.jsp").forward(request, response);
-    }
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        System.out.println("get from UserServer");
+//        if (this.game == null) {
+//            System.out.println("game is null from GET in UserServer");
+//            this.game = new Game();
+//        }
+//
+//        getServletContext().getRequestDispatcher("/commander.jsp").forward(request, response);
+//    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        boolean repeated = false;
-        for (String id : this.usersId) {
-            if (id != null) {
-                if (id.equals(request.getParameter("sessionid"))) {
-                    repeated = true;
+        if (this.games.size() == 0) {
+            System.out.println("game is null from POST in UserServer");
+            this.games.put(0, new Game());
+        }
+        Game game = null;
+        for (Integer gameIdx : this.games.keySet()) {
+            game = this.games.get(gameIdx);
+            if (!game.isStarted) {
+                if (!game.isPlayerExisted(request.getParameter("sessionId"))) {
+                    String name = request.getParameter("name");
+                    game.preparePlayer(name, request.getParameter("sessionId"));
+                    game.start();
+
+                    request.setAttribute("games", games);
+                    break;
                 }
             }
+            game = null;
         }
-        if (repeated) {
-//            getServletContext().getRequestDispatcher("/user.jsp").forward(request, response);
-            response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/index.jsp"));
-        } else {
-            if (menu == null) {
-                System.out.println("menu is null from POST");
-                Maps maps = new Maps();
-                maps.addMap("map.json");
-                this.menu = new Menu();
-                this.menu.setMaps(maps, "0");
-            }
-
+        if (game == null) {
+            game = new Game();
+            this.games.put(this.games.size(), game);
             String name = request.getParameter("name");
-            this.menu.start(name);
-            this.usersId[count] = request.getParameter("sessionid");
-            this.users[count++] = menu.playerViewer;
+            game.preparePlayer(name, request.getParameter("sessionId"));
+            game.start();
 
-            System.out.println("count: " + count);
-            if (count == 1) {
-                for (PlayerViewer user : this.users) {
-                    if (user != null) {
-                        user.playerController.startGame();
-                    }
-                }
-            }
-
-            request.setAttribute("varNames", this.users);
-            request.setAttribute("varIds", this.usersId);
-            getServletContext().getRequestDispatcher("/shoutServlet").forward(request, response);
+            request.setAttribute("games", games);
         }
+        getServletContext().getRequestDispatcher("/command").forward(request, response);
     }
 }

@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-<%@ page import = "java.io.*,java.util.*" %>
+<%@ page import="java.io.*,java.util.*" %>
 <%
     // Get session creation time.
     Date createTime = new Date(session.getCreationTime());
@@ -11,18 +11,15 @@
     int visitCount = 0;
     String visitCountKey = new String("visitCount");
     String userIDKey = new String("userID");
-    String userID = new String("ABCD");
 
     // Check if this is new comer on your Webpage.
-    if (session.isNew() || session.getAttribute(visitCountKey) == null){
+    if (session.isNew() || session.getAttribute(visitCountKey) == null) {
         title = "Welcome to my website";
-        session.setAttribute(userIDKey, userID);
-        session.setAttribute(visitCountKey,  visitCount);
+        session.setAttribute(visitCountKey, visitCount);
     }
     visitCount = (int) session.getAttribute(visitCountKey);
     visitCount = visitCount + 1;
-    userID = (String)session.getAttribute(userIDKey);
-    session.setAttribute(visitCountKey,  visitCount);
+    session.setAttribute(visitCountKey, visitCount);
 %>
 
 <!DOCTYPE html>
@@ -33,16 +30,19 @@
 </head>
 <body>
 <h1>WORLD NAVIGATOR!</h1>
-<h2>Commandor</h2>
-<form method="POST" action="shoutServlet">
-    <table border = "1" align = "center">
-        <tr bgcolor = "#949494">
+<h2>Commander</h2>
+<% if (application.getAttribute("user") != null) {%>
+<%= application.getAttribute("user")%>
+<% }%>
+<form method="POST" action="command">
+    <table border="1" align="center">
+        <tr bgcolor="#949494">
             <th>Session info</th>
             <th>Value</th>
         </tr>
         <tr>
             <td>id</td>
-            <td><% out.print( session.getId()); %></td>
+            <td><% out.print(session.getId()); %></td>
         </tr>
         <tr>
             <td>Creation Time</td>
@@ -53,27 +53,32 @@
             <td><% out.print(lastAccessTime); %></td>
         </tr>
         <tr>
-            <td>User ID</td>
-            <td><% out.print(userID); %></td>
-        </tr>
-        <tr>
             <td>Number of visits</td>
             <td><% out.print(visitCount); %></td>
         </tr>
     </table>
     <table>
         <tr>
-            <td>Change your name:</td>
-            <td><input type="text" id="name" name="name"/></td>
-            <td><input type = "hidden" name="sessionid" value="<%=session.getId() %>"></td>
+<%--            <td>Change your name:</td>--%>
+<%--            <td><input type="text" id="name" name="name"/></td>--%>
+            <td><input type="hidden" name="sessionId" value="<%=session.getId() %>"></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td><input type="submit" name="forward" value="Forward"/></td>
         </tr>
     </table>
     <table>
         <tr>
             <td><input type="submit" name="left" value="Left"/></td>
-            <td><input type="submit" name="right" value="Right"/></td>
-            <td><input type="submit" name="forward" value="Forward"/></td>
             <td><input type="submit" name="backward" value="Backward"/></td>
+            <td><input type="submit" name="right" value="Right"/></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td><input type="submit" name="location" value="Location"/></td>
         </tr>
     </table>
     <table>
@@ -89,7 +94,6 @@
         <tr>
             <td><input type="submit" name="look" value="Look"/></td>
             <td><input type="submit" name="room" value="Room"/></td>
-            <td><input type="submit" name="location" value="Location"/></td>
             <td><input type="submit" name="items" value="My items"/></td>
         </tr>
     </table>
@@ -114,12 +118,12 @@
                     contentElement.innerHTML = xmlhttp.responseText + contentElement.innerHTML;
                 }
             }
-            xmlhttp.open("GET", "shoutServlet?t=" + new Date(), true);
+            xmlhttp.open("GET", "command?t=" + new Date(), true);
             xmlhttp.send();
         }
     }
 
-    setInterval(getMessages, 1000);
+    // setInterval(getMessages, 1000);
 </script>
 </body>
 </html>

@@ -291,10 +291,11 @@ public class PlayerController implements PlayerControllerInterface {
     }
 
     public void quit() {
-        this.playerModel.menu.quit();
+        this.playerModel.game.quit();
     }
 
     public void use_method(String command) {
+        System.out.println("use_method: "+playerModel.name);
         Command c = this.commandsMap.get(command);
         if (c == null) {
             c = this.shortCommandsMap.get(command);
@@ -305,6 +306,44 @@ public class PlayerController implements PlayerControllerInterface {
         } else {
             c.applyCommand(this);
         }
+    }
+
+    public boolean isFighting() {
+        if (this.playerModel.fight == null) {
+            return false;
+        }
+        return (boolean) this.playerModel.fight.get("isFighting");
+    }
+
+    public void setIsFighting(boolean isFighting) {
+        this.playerModel.fight.put("isFighting", isFighting);
+    }
+
+    public PlayerViewer fightingAgainst() {
+        return (PlayerViewer) this.playerModel.fight.get("against");
+    }
+
+    public void setFightingAgainst(PlayerViewer playerViewer) {
+        this.playerModel.fight.put("against", playerViewer);
+    }
+
+    public void setFightingChoice(String choice) {
+        this.playerModel.fight.put("choice", choice);
+    }
+
+    public String getFightingChoice() {
+        if (this.playerModel.fight.get("choice") == null) {
+            return null;
+        }
+        return this.playerModel.fight.get("choice").toString();
+    }
+
+    public boolean isWinner() {
+        return this.playerModel.winner;
+    }
+
+    public void setWinner() {
+        this.playerModel.winner = true;
     }
 
     @Override

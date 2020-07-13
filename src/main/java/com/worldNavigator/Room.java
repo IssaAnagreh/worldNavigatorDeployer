@@ -1,7 +1,9 @@
 package com.worldNavigator;
 import org.json.simple.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Room {
   public HashMap<String, Wall> walls = new HashMap<>();
@@ -9,6 +11,7 @@ public class Room {
   private Boolean isLit;
   public Boolean lightSwitch;
   public final Integer ROOM_NUMBER;
+  public List<PlayerViewer> occupants = new ArrayList<>();
 
   public Room(JSONObject room, int room_counter) {
     this.ROOM_NAME =
@@ -66,6 +69,14 @@ public class Room {
 
   public Boolean getIsLit() {
     return isLit;
+  }
+
+  public void addOccupant(PlayerViewer playerViewer, Game game) {
+    if (this.occupants.size() > 0) {
+      game.fight(playerViewer, this.occupants.get(0));
+      return;
+    }
+    this.occupants.add(playerViewer);
   }
 
   @Override

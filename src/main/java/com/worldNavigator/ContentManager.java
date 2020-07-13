@@ -65,6 +65,20 @@ public class ContentManager {
     return this.contents;
   }
 
+  public int calculatePower() {
+    int power = 0;
+    for (Object key: this.contents.keySet()) {
+      if (key == "keys") {
+        power += 10;
+      } else if (key == "golds") {
+        power += (int) this.contents.get(key);
+      } else if (key == "flashLights") {
+        power += ((int) this.contents.get(key) * 2);
+      }
+    }
+    return power;
+  }
+
   @Override
   public String toString() {
     return this.getContents().toString();

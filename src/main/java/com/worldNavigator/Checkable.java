@@ -30,6 +30,8 @@ public abstract class Checkable implements CheckBehavior {
           if (contentType.toString().equals("keys")) {
             ((List<?>) acquiredContents.get("keys"))
                 .forEach(((List) playerModel.getContent("keys"))::add);
+            System.out.println("acquireContents: "+playerModel.name);
+            System.out.println(playerModel.contents);
           } else {
             playerModel.addToContents(
                 contentType.toString(),

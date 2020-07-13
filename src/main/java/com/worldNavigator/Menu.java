@@ -1,67 +1,24 @@
 package com.worldNavigator;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Scanner;
+import java.util.*;
 
 public class Menu {
-  private Maps maps;
-  private int map_index;
-  public PlayerController player;
-  public PlayerModel playerModel;
-  public PlayerViewer playerViewer;
+    private Maps maps;
+    private int map_index;
 
-  public void setMaps(Maps maps) {
-    this.maps = maps;
-    this.map_chooser();
-  }
-
-  public void setMaps(Maps maps, String sc) {
-    this.maps = maps;
-    this.map_chooser(sc);
-  }
-
-  public void map_chooser() {
-    System.out.println("Choose one of the available maps: ");
-    int counter = 0;
-    while (counter != this.maps.maps.size()) {
-      System.out.println(counter + ": " + this.maps.maps.get(counter));
-      ++counter;
+    public void restart(String name, PlayerModel playerModel) throws IOException {
+//    String mapName = this.maps.maps.get(this.map_index).mapName;
+//    MapFactory new_map = this.maps.generate(mapName);
+//    this.maps.replace(new_map, this.map_index);
+//    preparePlayer(name);
+//    playerModel.startGame();
     }
-    System.out.println("Enter map number");
-    Scanner sc = new Scanner(System.in);
-    this.map_index = sc.nextInt();
-  }
 
-  public void map_chooser(String sc) {
-    this.map_index = Integer.parseInt(sc);
-  }
 
-  public void preparePlayer(MapFactory map, String name) {
-    this.playerModel = new PlayerModel(map, this);
-    this.player = new PlayerController(this.playerModel);
-    this.playerViewer = new PlayerViewer(this.player, name);
-  }
-
-  public void start(String name) throws IOException {
-//    new Thread( () -> preparePlayer(this.maps.maps.get(this.map_index), name));
-    preparePlayer(this.maps.maps.get(this.map_index), name);
-//    this.player.startGame();
-  }
-
-  public void restart(String name) throws IOException {
-    String mapName = this.maps.maps.get(this.map_index).mapName;
-    MapFactory new_map = this.maps.generate(mapName);
-    this.maps.replace(new_map, this.map_index);
-
-    preparePlayer(this.maps.maps.get(0), name);
-    player.startGame();
-  }
-
-  public void quit() {
-    System.exit(1);
-  }
-
-  @Override
-  public String toString() {
-    return "Menu";
-  }
+    @Override
+    public String toString() {
+        return "Menu";
+    }
 }
