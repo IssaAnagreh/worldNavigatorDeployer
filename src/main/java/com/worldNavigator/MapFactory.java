@@ -13,10 +13,10 @@ import org.json.simple.parser.ParseException;
 
 
 public class MapFactory {
-  private String name;
+  public String name;
   public List<Room> rooms = new ArrayList<>();
   public int endTime;
-  public String mapName;
+//  public String mapName;
   public String location;
   public JSONArray jsonRooms;
   public JSONObject jsonMap;
@@ -32,8 +32,7 @@ public class MapFactory {
 
   @SuppressWarnings("unchecked")
   public MapFactory(String mapName) {
-    this.mapName = mapName;
-    this.name = "MapFactory";
+//    this.name = "MapFactory";
 
     JSONParser jsonParser = new JSONParser();
 
@@ -64,7 +63,7 @@ public class MapFactory {
       throw new IllegalArgumentException();
     } else {
       System.out.println(map.get("end_time"));
-      name = (String) map.get("name");
+      this.name = (String) map.get("name");
       endTime = Integer.parseInt(map.get("end_time").toString());
       this.jsonMap = map;
       this.jsonRooms = castToJSONArray(map.get("rooms"));
