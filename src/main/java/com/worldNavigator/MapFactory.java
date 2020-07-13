@@ -46,7 +46,7 @@ public class MapFactory {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       System.out.println("file.getAbsolutePath(): "+file.getAbsolutePath());
-      this.name = "FileNotFoundException";
+      this.name = file.getAbsolutePath();//"FileNotFoundException";
     } catch (IOException e) {
       e.printStackTrace();
       this.name = "IOException";
