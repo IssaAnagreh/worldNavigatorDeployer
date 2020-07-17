@@ -1,13 +1,28 @@
 package com.worldNavigator;
 import org.json.simple.JSONObject;
 
+import java.util.HashMap;
+
 public class Mirror extends Item {
   private final String LOCATION;
   private final String NAME = "Mirror";
+  Game game;
 
-  public Mirror(JSONObject mirror) {
+  public Mirror(JSONObject mirror, Game game) {
+    this.game = game;
     this.LOCATION = mirror.get("location").toString();
     super.setCheckBehavior(new Unlocked_Checkable(mirror, this.LOCATION));
+
+    this.generateCollection();
+  }
+
+  private void generateCollection() {
+    HashMap<String, String> dbHashMap = new HashMap<>();
+    dbHashMap.put("game", Integer.toString(this.game.id));
+    dbHashMap.put("name", this.NAME);
+    dbHashMap.put("location", this.LOCATION);
+    dbHashMap.put("contents", super.checkBehavior.getContents().getContents().toString());
+    this.game.db.insertOne("Mirrors", dbHashMap);
   }
 
   public String getLocation() {

@@ -53,7 +53,7 @@ public class CommandServlet extends HttpServlet {
 
         String htmlMessage = "";
         if (this.game.whoIsIt(request) == null) {
-            htmlMessage = "<p><b>" + "You are out of the game" + "</b><br/>";
+            htmlMessage = "<p><b>" + "You are out of the game, you lost!" + "</b><br/>";
             sc.setAttribute("user", "<p><b>" + "" + "</b><br/>" + request.getParameter("sessionId") + "</b><br/>");
         } else {
             sc.setAttribute("user", "<p><b>" + this.game.whoIsIt(request).getName() + "</b><br/>" + request.getParameter("sessionId") + "</b><br/>");

@@ -1,11 +1,15 @@
 package com.worldNavigator;
 import org.json.simple.JSONObject;
 
+import java.util.HashMap;
+
 public class Safe extends Item {
   private final String NAME;
   private final String LOCATION;
+  Game game;
 
-  public Safe(JSONObject safe) {
+  public Safe(JSONObject safe, Game game) {
+    this.game = game;
     this.NAME = safe.get("name").toString();
     this.LOCATION = safe.get("location").toString();
 
@@ -15,6 +19,17 @@ public class Safe extends Item {
     } else {
       super.setCheckBehavior(new Unlocked_Checkable(safe, this.LOCATION));
     }
+
+    this.generateCollection();
+  }
+
+  private void generateCollection() {
+    HashMap<String, String> dbHashMap = new HashMap<>();
+    dbHashMap.put("game", Integer.toString(this.game.id));
+    dbHashMap.put("name", this.NAME);
+    dbHashMap.put("location", this.LOCATION);
+    dbHashMap.put("contents", super.checkBehavior.getContents().getContents().toString());
+    this.game.db.insertOne("Safes", dbHashMap);
   }
 
   public String getLocation() {

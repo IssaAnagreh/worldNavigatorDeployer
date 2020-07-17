@@ -38,7 +38,7 @@ public class JSONMapTest {
 
   @Test
   public void mapNameTest() {
-    assertTrue(this.map.mapName.length() > 0);
+    assertTrue(this.map.name.length() > 0);
   }
 
   @Test

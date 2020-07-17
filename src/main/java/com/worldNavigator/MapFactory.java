@@ -20,6 +20,9 @@ public class MapFactory {
   public JSONArray jsonRooms;
   public JSONObject jsonMap;
   private int roomsCount;
+  public Map<Integer, Boolean> starterRooms = new HashMap<>();
+  Game game;
+  String id;
 
   private JSONObject castToJSONObject(Object o) {
     return (JSONObject) o;
@@ -30,9 +33,10 @@ public class MapFactory {
   }
 
   @SuppressWarnings("unchecked")
-  public MapFactory(String mapName) {
+  public MapFactory(String mapName, Game game) {
     this.mapName = "MapFactory";
-
+    this.game = game;
+    
     JSONParser jsonParser = new JSONParser();
 
     File file = new File("map.json");
@@ -40,9 +44,9 @@ public class MapFactory {
       Object obj = jsonParser.parse(reader);
 
       JSONArray maps = castToJSONArray(obj);
+      System.out.println("file.getAbsolutePath(): "+file.getAbsolutePath());
 
       maps.forEach(map -> parseMapObject(castToJSONObject(map)));
-      System.out.println("file.getAbsolutePath(): "+file.getAbsolutePath());
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       System.out.println("file.getAbsolutePath(): "+file.getAbsolutePath());
@@ -61,13 +65,23 @@ public class MapFactory {
     if (map == null) {
       throw new IllegalArgumentException();
     } else {
-      System.out.println(map.get("end_time"));
       this.name = (String) map.get("name");
       endTime = Integer.parseInt(map.get("end_time").toString());
+
+      this.generateCollection(map);
+
       this.jsonMap = map;
       this.jsonRooms = castToJSONArray(map.get("rooms"));
       this.jsonRooms.forEach(room -> parseRoomObject(castToJSONObject(room)));
     }
+  }
+
+  private void generateCollection(JSONObject map) {
+    HashMap<String, String> dbHashMap = new HashMap<>();
+    dbHashMap.put("end_time", map.get("end_time").toString());
+    dbHashMap.put("name", this.name);
+    dbHashMap.put("game", Integer.toString(this.game.id));
+    this.game.db.insertOne("Maps", dbHashMap);
   }
 
   private void parseRoomObject(JSONObject room) {
@@ -77,7 +91,12 @@ public class MapFactory {
     } catch (Exception e) {
       throw new NullPointerException();
     }
-    this.rooms.add(new Room(roomObject, roomsCount));
+    if (roomObject.get("starter") != null) {
+      this.starterRooms.put(this.starterRooms.size(), Boolean.parseBoolean(roomObject.get("starter").toString()));
+    } else {
+      this.starterRooms.put(this.starterRooms.size(), false);
+    }
+    this.rooms.add(new Room(roomObject, roomsCount, this.game));
     this.roomsCount++;
   }
 

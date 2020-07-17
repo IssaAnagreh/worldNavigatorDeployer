@@ -1,15 +1,29 @@
 package com.worldNavigator;
 import org.json.simple.JSONObject;
 
+import java.util.HashMap;
+
 public class Window extends Item {
   public final String NAME;
   private final String LOCATION;
+  Game game;
 
-  public Window(JSONObject window) {
+  public Window(JSONObject window, Game game) {
+    this.game = game;
     this.NAME = "Window";
     this.LOCATION = window.get("location").toString();
 
     super.setCheckBehavior(new Uncheckable());
+
+    this.generateCollection();
+  }
+
+  private void generateCollection() {
+    HashMap<String, String> dbHashMap = new HashMap<>();
+    dbHashMap.put("game", Integer.toString(this.game.id));
+    dbHashMap.put("name", this.NAME);
+    dbHashMap.put("location", this.LOCATION);
+    this.game.db.insertOne("Windows", dbHashMap);
   }
 
   @Override

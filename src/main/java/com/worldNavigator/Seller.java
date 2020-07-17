@@ -14,8 +14,10 @@ public class Seller extends Item {
   public ContentManager contents;
   private List categories;
   private PlayerModel playerModel;
+  Game game;
 
-  public Seller(JSONObject seller) {
+  public Seller(JSONObject seller, Game game) {
+    this.game = game;
     this.LOCATION = seller.get("location").toString();
     super.setCheckBehavior(new Uncheckable());
     this.contents = new ContentManager();
@@ -27,6 +29,18 @@ public class Seller extends Item {
             item_name.toString(), Integer.parseInt(temp_selling.get(item_name).toString()));
       }
     }
+
+    this.generateCollection();
+  }
+
+  private void generateCollection() {
+    HashMap<String, String> dbHashMap = new HashMap<>();
+    dbHashMap.put("game", Integer.toString(this.game.id));
+    dbHashMap.put("name", this.NAME);
+    dbHashMap.put("location", this.LOCATION);
+    dbHashMap.put("contents", this.contents.getContents().toString());
+    dbHashMap.put("selling", this.selling.toString());
+    this.game.db.insertOne("Sellers", dbHashMap);
   }
 
   public String getLocation() {

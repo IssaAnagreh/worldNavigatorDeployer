@@ -23,6 +23,7 @@ public class RoomDrawer {
       this.roomDraw += "<br>" + row(3);
       this.roomDraw += "<br>" + row(4);
       this.roomDraw += "<br>" + row(5);
+      this.roomDraw += "<br>" + this.room.ROOM_NAME;
     }
   }
 

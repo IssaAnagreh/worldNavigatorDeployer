@@ -56,11 +56,11 @@ public class PlayerController implements PlayerControllerInterface {
         this.shortCommandsMap.put("f", playerController -> move(MoveTypes.forward));
         this.shortCommandsMap.put("b", playerController -> move(MoveTypes.backward));
         this.shortCommandsMap.put(
-                "c",
-                playerController -> {
-                    this.check();
-                    this.acquire_items();
-                });
+            "c",
+            playerController -> {
+                this.check();
+                this.acquire_items();
+            });
         this.shortCommandsMap.put("items", PlayerControllerInterface::myItems);
         this.shortCommandsMap.put("key", PlayerControllerInterface::use_key);
         this.shortCommandsMap.put("light", PlayerControllerInterface::switchLights);
@@ -74,104 +74,166 @@ public class PlayerController implements PlayerControllerInterface {
 
         c.put("room", PlayerControllerInterface::room);
         c.put(
-                "orientation",
-                playerController -> {
-                    this.myOrientation();
+            "orientation",
+            playerController -> {
+                this.myOrientation();
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <o> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put(
-                "location",
-                playerController -> {
-                    this.myLocation();
+            "location",
+            playerController -> {
+                this.myLocation();
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <loc> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put("wall", PlayerControllerInterface::wall);
         c.put("look", PlayerControllerInterface::look);
         c.put(
-                "left",
-                playerController -> {
-                    this.rotateLeft();
+            "left",
+            playerController -> {
+                this.rotateLeft();
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <l> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put(
-                "right",
-                playerController -> {
-                    this.rotateRight();
+            "right",
+            playerController -> {
+                this.rotateRight();
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <r> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put(
-                "forward",
-                playerController -> {
-                    move(MoveTypes.forward);
+            "forward",
+            playerController -> {
+                move(MoveTypes.forward);
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <f> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put(
-                "backward",
-                playerController -> {
-                    move(MoveTypes.backward);
+            "backward",
+            playerController -> {
+                move(MoveTypes.backward);
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <b> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put(
-                "check",
-                playerController -> {
-                    this.check();
-                    this.acquire_items();
+            "check",
+            playerController -> {
+                this.check();
+                this.acquire_items();
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <c> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put(
-                "myItems",
-                playerController -> {
-                    this.myItems();
+            "myItems",
+            playerController -> {
+                this.myItems();
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <items> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put(
-                "useKey",
-                playerController -> {
-                    this.use_key();
+            "useKey",
+            playerController -> {
+                this.use_key();
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <key> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put("open", PlayerControllerInterface::open);
         c.put("trade", PlayerControllerInterface::trade);
         c.put(
-                "switchLight",
-                playerController -> {
-                    this.switchLights();
+            "switchLight",
+            playerController -> {
+                this.switchLights();
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <light> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put(
-                "flashLight",
-                playerController -> {
-                    this.flashLight();
+            "flashLight",
+            playerController -> {
+                this.flashLight();
 //                    if (this.hint)
 //                        this.playerModel.notify_player(
 //                                "You can use <flash> as a shortcut command" + this.HINT_SENTENCE);
-                });
+            });
         c.put("commands", PlayerControllerInterface::commands);
         c.put("time", PlayerControllerInterface::time);
         c.put("hints", PlayerControllerInterface::switchHints);
         c.put("quit", PlayerControllerInterface::quit);
 
         this.commandsMap = c;
+    }
+
+    public int getGolds() {
+        if (this.playerModel.getContents() == null) {
+            return 0;
+        }
+        if (this.playerModel.getContents().get("golds") == null) {
+            return 0;
+        }
+        return Integer.parseInt(this.playerModel.getContents().get("golds").toString());
+    }
+
+    public void addGolds(int golds) {
+        if (this.playerModel.getContents() == null) {
+            this.playerModel.contents.put("golds", golds);
+        }
+        if (this.playerModel.getContents().get("golds") == null) {
+            this.playerModel.contents.put("golds", golds);
+        }
+        this.playerModel.contents.put("golds", Integer.parseInt(this.playerModel.getContents().get("golds").toString()) + golds);
+    }
+
+    public int getFlashLights() {
+        if (this.playerModel.getContents() == null) {
+            return 0;
+        }
+        if (this.playerModel.getContents().get("flashLights") == null) {
+            return 0;
+        }
+        return Integer.parseInt(this.playerModel.getContents().get("flashLights").toString());
+    }
+
+    public void addFlashLights(int flashLights) {
+        if (this.playerModel.getContents() == null) {
+            this.playerModel.contents.put("flashLights", flashLights);
+        }
+        if (this.playerModel.getContents().get("flashLights") == null) {
+            this.playerModel.contents.put("flashLights", flashLights);
+        }
+        this.playerModel.contents.put("flashLights", Integer.parseInt(this.playerModel.getContents().get("flashLights").toString()) + flashLights);
+    }
+
+    public void addKeys(ArrayList<KeyChecker> keys) {
+        if (this.playerModel.getContents() == null) {
+            this.playerModel.contents.put("keys", keys);
+        }
+        if (this.playerModel.getContents().get("keys") == null) {
+            this.playerModel.contents.put("keys", keys);
+        }
+        ArrayList<KeyChecker> keysSource = playerModel.getKeys();
+        keysSource.addAll(keys);
+        this.playerModel.contents.put("keys", keysSource);
+    }
+
+    public ArrayList<KeyChecker> getKeys() {
+        if (this.playerModel.getContents() == null) {
+            return new ArrayList<>();
+        }
+        if (this.playerModel.getContents().get("keys") == null) {
+            return new ArrayList<>();
+        }
+        return playerModel.getKeys();
     }
 
     public void myItems() {
@@ -295,7 +357,6 @@ public class PlayerController implements PlayerControllerInterface {
     }
 
     public void use_method(String command) {
-        System.out.println("use_method: "+playerModel.name);
         Command c = this.commandsMap.get(command);
         if (c == null) {
             c = this.shortCommandsMap.get(command);

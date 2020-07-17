@@ -1,13 +1,28 @@
 package com.worldNavigator;
 import org.json.simple.JSONObject;
 
+import java.util.HashMap;
+
 public class Painting extends Item {
   public final String LOCATION;
   public final String NAME = "Painting";
+  Game game;
 
-  public Painting(JSONObject painting) {
+  public Painting(JSONObject painting, Game game) {
+    this.game = game;
     this.LOCATION = painting.get("location").toString();
     super.setCheckBehavior(new Unlocked_Checkable(painting, this.LOCATION));
+
+    this.generateCollection();
+  }
+
+  private void generateCollection() {
+    HashMap<String, String> dbHashMap = new HashMap<>();
+    dbHashMap.put("game", Integer.toString(this.game.id));
+    dbHashMap.put("name", this.NAME);
+    dbHashMap.put("location", this.LOCATION);
+    dbHashMap.put("contents", super.checkBehavior.getContents().getContents().toString());
+    this.game.db.insertOne("Paintings", dbHashMap);
   }
 
   public String getLocation() {

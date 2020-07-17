@@ -97,6 +97,11 @@
             <td><input type="submit" name="items" value="My items"/></td>
         </tr>
     </table>
+    <table>
+        <tr>
+            <td><input type="submit" name="quit" value="Quit"/></td>
+        </tr>
+    </table>
 </form>
 <h2> Current Commands </h2>
 <div id="content">

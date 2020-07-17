@@ -2,13 +2,17 @@ package com.worldNavigator;
 
 import org.json.simple.JSONObject;
 
+import java.util.HashMap;
+
 public class Door extends Item implements NextGoing {
   public final String NAME;
   private final Boolean IS_GOLDEN;
   private final String NEXT_ROOM;
   private final String LOCATION;
+  Game game;
 
-  public Door(JSONObject door) {
+  public Door(JSONObject door, Game game) {
+    this.game = game;
     this.NAME = door.get("name").toString();
     this.LOCATION = door.get("location").toString();
     this.IS_GOLDEN = door.get("golden").equals("true");
@@ -18,6 +22,18 @@ public class Door extends Item implements NextGoing {
       super.setUseKeyBehavior(new Openable(door, "Door"));
     }
     super.setCheckBehavior(new Uncheckable());
+
+    this.generateCollection();
+  }
+
+  private void generateCollection() {
+    HashMap<String, String> dbHashMap = new HashMap<>();
+    dbHashMap.put("game", Integer.toString(this.game.id));
+    dbHashMap.put("name", this.NAME);
+    dbHashMap.put("location", this.LOCATION);
+    dbHashMap.put("isGolden", Boolean.toString(this.IS_GOLDEN));
+    dbHashMap.put("nextRoom", this.NEXT_ROOM);
+    this.game.db.insertOne("Doors", dbHashMap);
   }
 
   public String getNextRoom() {

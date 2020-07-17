@@ -16,7 +16,6 @@ public class Menu {
 //    playerModel.startGame();
     }
 
-
     @Override
     public String toString() {
         return "Menu";

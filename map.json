@@ -16,6 +16,7 @@
           "name": "room_1",
           "lit": "false",
           "switch": "true",
+          "starter": "true",
           "n_wall": {
             "door": {
               "name": "room_1-door_1",
@@ -85,6 +86,7 @@
           "name": "room_2",
           "lit": "true",
           "switch": "false",
+          "starter": "true",
           "n_wall": {
             "chest": {
               "name": "room_2-chest_1",
@@ -168,6 +170,7 @@
           "name": "room_3",
           "lit": "true",
           "switch": "true",
+          "starter": "false",
           "n_wall": {
             "painting": {
               "content": {
@@ -218,6 +221,7 @@
           "name": "room_4",
           "lit": "false",
           "switch": "false",
+          "starter": "false",
           "n_wall": {
             "door": {
               "name": "room_4-door_1",
@@ -269,6 +273,7 @@
           "name": "room_5",
           "lit": "true",
           "switch": "false",
+          "starter": "false",
           "n_wall": {
             "door": {
               "name": "room_5-door_1",

@@ -1,10 +1,11 @@
 package com.worldNavigator;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
     public PlayerViewer playerViewer;
@@ -13,9 +14,44 @@ public class Game {
     private Maps maps;
     private int map_index = 0;
     public boolean isStarted = false;
+    final DB db;
+    int id;
 
-    public Game() {
-        Maps maps = new Maps();
+    public Game(int id) {
+        this.db = new DB();
+        this.db.getCollection("Maps").drop();
+        this.db.generateCollection("Maps");
+        this.db.getCollection("Players").drop();
+        this.db.generateCollection("Players");
+        this.db.getCollection("Rooms").drop();
+        this.db.generateCollection("Rooms");
+        this.db.getCollection("Walls").drop();
+        this.db.generateCollection("Walls");
+        this.db.getCollection("Keys").drop();
+        this.db.generateCollection("Keys");
+        this.db.getCollection("Doors").drop();
+        this.db.generateCollection("Doors");
+        this.db.getCollection("Chests").drop();
+        this.db.generateCollection("Chests");
+        this.db.getCollection("Paintings").drop();
+        this.db.generateCollection("Paintings");
+        this.db.getCollection("Mirrors").drop();
+        this.db.generateCollection("Mirrors");
+        this.db.getCollection("Sellers").drop();
+        this.db.generateCollection("Sellers");
+        this.db.getCollection("MasterKeys").drop();
+        this.db.generateCollection("MasterKeys");
+        this.db.getCollection("Safes").drop();
+        this.db.generateCollection("Safes");
+        this.db.getCollection("Windows").drop();
+        this.db.generateCollection("Windows");
+        this.db.getCollection("Tables").drop();
+        this.db.generateCollection("Tables");
+        this.db.getCollection("Gates").drop();
+        this.db.generateCollection("Gates");
+
+        this.id = id;
+        Maps maps = new Maps(this);
         maps.addMap("map.json");
         setMaps(maps, "0");
     }
@@ -58,10 +94,11 @@ public class Game {
     }
 
     public void preparePlayer(String name, String playerSession) {
-        PlayerController player = new PlayerController(new PlayerModel(this.maps.maps.get(this.map_index), this, name));
+        playersSessions.add(playerSession);
+        PlayerController player = new PlayerController(new PlayerModel(this.maps.maps.get(this.map_index), this, name, playerSession));
         this.playerViewer = new PlayerViewer(player, name, playerSession);
         playerViewers.add(this.playerViewer);
-        playersSessions.add(playerSession);
+        player.playerModel.addToRoom(this.playerViewer);
     }
 
     public void start() throws IOException {
@@ -75,9 +112,35 @@ public class Game {
         }
     }
 
+    private String exit(HttpServletRequest request) {
+        if (!this.isStarted) {
+            return "Game didn't start yet, " + this.playerViewers.size() + " players available, game must have " + 2 + " players";
+        }
+        PlayerViewer user = null;
+        System.out.println("request.getParameter(\"sessionId\"): " + request.getParameter("sessionId"));
+        for (PlayerViewer playerViewer : playerViewers) {
+            if (playerViewer.playerSession.equals(request.getParameter("sessionId"))) {
+                user = playerViewer;
+            }
+        }
+        assert user != null;
+        System.out.println("user: " + user.getName());
+        if (user.playerController.playerModel.isPlaying()) {
+            String message = "";
+            if (request.getParameter("quit") != null) {
+                this.removePlayer(user);
+            }
+        }
+        return "You quited the game";
+    }
+
     public String playerCommand(HttpServletRequest request) {
         if (!this.isStarted) {
             return "Game didn't start yet, " + this.playerViewers.size() + " players available, game must have " + 2 + " players";
+        }
+
+        if (this.playerViewers.size() == 1) {
+            return "<b>" + "You are the last player, You won!" + "</b>";
         }
         PlayerViewer user = null;
         for (PlayerViewer playerViewer : playerViewers) {
@@ -114,6 +177,8 @@ public class Game {
                 message = "location";
             } else if (request.getParameter("items") != null) {
                 message = "items";
+            } else if (request.getParameter("quit") != null) {
+                this.exit(request);
             }
             user.playerController.use_method(message.trim());
             return user.msg;
@@ -145,11 +210,9 @@ public class Game {
         int power1 = playerViewer1.playerController.playerModel.power();
         int power2 = playerViewer2.playerController.playerModel.power();
         if (power1 > power2) {
-            this.playersSessions.remove(playerViewer2.playerSession);
-            this.playerViewers.remove(playerViewer2);
+            this.removePlayer(playerViewer2, playerViewer1);
         } else if (power1 < power2) {
-            this.playersSessions.remove(playerViewer1.playerSession);
-            this.playerViewers.remove(playerViewer1);
+            this.removePlayer(playerViewer1, playerViewer2);
         } else {
             playerViewer1.playerController.setIsFighting(true);
             playerViewer1.playerController.setFightingAgainst(playerViewer2);
@@ -174,7 +237,7 @@ public class Game {
             wonPlayerViewer.playerController.setIsFighting(false);
             wonPlayerViewer.playerController.setFightingChoice(null);
 
-            this.removePlayer(lostPlayerViewer);
+            this.removePlayer(lostPlayerViewer, wonPlayerViewer);
 
             if (playerViewers.size() == 1) {
                 playerViewers.get(0).playerController.setWinner();
@@ -215,7 +278,8 @@ public class Game {
                         return null;
                 }
                 break;
-            default: return null;
+            default:
+                return null;
         }
         return null;
     }
@@ -252,14 +316,66 @@ public class Game {
                         return null;
                 }
                 break;
-            default: return null;
+            default:
+                return null;
         }
         return null;
     }
 
-    public void removePlayer(PlayerViewer playerViewer) {
+    public void removePlayer(PlayerViewer playerViewer, PlayerViewer winner) {
+        int freeGolds = playerViewer.playerController.getGolds();
+        int freeFlashLights = playerViewer.playerController.getFlashLights();
+        ArrayList<KeyChecker> freeKeys = playerViewer.playerController.getKeys();
         this.playerViewers.remove(playerViewer);
         this.playersSessions.remove(playerViewer.playerSession);
+        this.distributeGolds(freeGolds);
+        winner.playerController.addFlashLights(freeFlashLights);
+        winner.playerController.addKeys(freeKeys);
+    }
+
+    public void removePlayer(PlayerViewer playerViewer) {
+        System.out.println("playerViewer: " + playerViewer.getName());
+        int freeGolds = playerViewer.playerController.getGolds();
+        int freeFlashLights = playerViewer.playerController.getFlashLights();
+        ArrayList<KeyChecker> freeKeys = playerViewer.playerController.getKeys();
+        System.out.println("this.playerViewer.playerController.playerModel.roomIndex: " + playerViewer.playerController.playerModel.roomIndex);
+        Map<String, Object> emptyLocation = playerViewer.playerController.playerModel.map.rooms.get(playerViewer.playerController.playerModel.roomIndex).getEmptyLocation();
+
+        JSONObject content = new JSONObject();
+        JSONArray keys = new JSONArray();
+        System.out.println("((Wall) emptyLocation.get(\"wall\")).items : " + ((Wall) emptyLocation.get("wall")).items);
+        for (Key key : (ArrayList<Key>) playerViewer.playerController.playerModel.contents.get("keys")) {
+            System.out.println("key: " + key);
+            keys.add(key);
+        }
+        content.put("keys", keys);
+        content.put("flashLights", playerViewer.playerController.playerModel.contents.get("flashLights"));
+
+        JSONObject json = new JSONObject();
+        json.put("location", emptyLocation.get("location"));
+        json.put("content", content);
+
+        System.out.println("emptyLocation: " + emptyLocation);
+        System.out.println(json);
+        ((Wall) emptyLocation.get("wall")).itemsFactory.preparePainting(json, true);
+        this.playerViewers.remove(playerViewer);
+        this.playersSessions.remove(playerViewer.playerSession);
+        this.distributeGolds(freeGolds);
+    }
+
+    public void distributeGolds(int freeGolds) {
+        int goldsDivision = freeGolds / this.playerViewers.size();
+        for (PlayerViewer playerViewer : this.playerViewers) {
+            playerViewer.playerController.addGolds(goldsDivision);
+        }
+    }
+
+    public void endGame(PlayerViewer winner) {
+        for (PlayerViewer playerViewer : this.playerViewers) {
+            if (playerViewer.playerSession != winner.playerSession) {
+                this.removePlayer(playerViewer);
+            }
+        }
     }
 
     public void quit() {

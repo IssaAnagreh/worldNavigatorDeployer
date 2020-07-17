@@ -5,9 +5,9 @@
     // Get session creation time.
     Date createTime = new Date(session.getCreationTime());
 
-    MapFactory mapFactory = new MapFactory("map.json");
+//    MapFactory mapFactory = new MapFactory("map.json");
     // Get last access time of this Webpage.
-    String lastAccessTime = mapFactory.name;
+    Date lastAccessTime = new Date(session.getLastAccessedTime());
 
     String title = "Welcome Back to my website";
     int visitCount = 0;
