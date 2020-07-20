@@ -22,7 +22,6 @@ public class MapFactory {
   private int roomsCount;
   public Map<Integer, Boolean> starterRooms = new HashMap<>();
   Game game;
-  String id;
 
   private JSONObject castToJSONObject(Object o) {
     return (JSONObject) o;
@@ -66,25 +65,31 @@ public class MapFactory {
       throw new IllegalArgumentException();
     } else {
       this.name = (String) map.get("name");
-      endTime = Integer.parseInt(map.get("end_time").toString());
+      this.endTime = Integer.parseInt(map.get("endTime").toString());
 
       this.generateCollection(map);
 
       this.jsonMap = map;
       this.jsonRooms = castToJSONArray(map.get("rooms"));
-      this.jsonRooms.forEach(room -> parseRoomObject(castToJSONObject(room)));
+      this.jsonRooms.forEach(room -> {
+        try {
+          parseRoomObject(castToJSONObject(room));
+        } catch (ParseException e) {
+          e.printStackTrace();
+        }
+      });
     }
   }
 
   private void generateCollection(JSONObject map) {
-    HashMap<String, String> dbHashMap = new HashMap<>();
-    dbHashMap.put("end_time", map.get("end_time").toString());
+    HashMap<String, Object> dbHashMap = new HashMap<>();
+    dbHashMap.put("endTime", map.get("endTime").toString());
     dbHashMap.put("name", this.name);
     dbHashMap.put("game", Integer.toString(this.game.id));
     this.game.db.insertOne("Maps", dbHashMap);
   }
 
-  private void parseRoomObject(JSONObject room) {
+  private void parseRoomObject(JSONObject room) throws ParseException {
     JSONObject roomObject;
     try {
       roomObject = castToJSONObject(room.get("room"));
@@ -96,7 +101,7 @@ public class MapFactory {
     } else {
       this.starterRooms.put(this.starterRooms.size(), false);
     }
-    this.rooms.add(new Room(roomObject, roomsCount, this.game));
+    this.rooms.add(new Room(roomObject, this.roomsCount, this.game));
     this.roomsCount++;
   }
 

@@ -30,7 +30,7 @@ public class CommandServlet extends HttpServlet {
         }
 
         for (Game game : this.games.values()) {
-            if (game.whoIsIt(request) != null) {
+            if (game.whoIsIt(request.getParameter("sessionId")) != null) {
                 this.game = game;
             }
         }
@@ -41,7 +41,7 @@ public class CommandServlet extends HttpServlet {
             return;
         }
 
-        if (this.game.whoIsIt(request) != null) {
+        if (this.game.whoIsIt(request.getParameter("sessionId")) != null) {
             if (request.getParameter("rock") != null) {
                 this.game.setFightingChoice(request, "rock");
             } else if (request.getParameter("paper") != null) {
@@ -52,13 +52,13 @@ public class CommandServlet extends HttpServlet {
         }
 
         String htmlMessage = "";
-        if (this.game.whoIsIt(request) == null) {
+        if (this.game.whoIsIt(request.getParameter("sessionId")) == null) {
             htmlMessage = "<p><b>" + "You are out of the game, you lost!" + "</b><br/>";
             sc.setAttribute("user", "<p><b>" + "" + "</b><br/>" + request.getParameter("sessionId") + "</b><br/>");
         } else {
-            sc.setAttribute("user", "<p><b>" + this.game.whoIsIt(request).getName() + "</b><br/>" + request.getParameter("sessionId") + "</b><br/>");
-            if (this.game.whoIsIt(request) != null) {
-                if (this.game.isFighting(this.game.whoIsIt(request))) {
+            sc.setAttribute("user", "<p><b>" + this.game.whoIsIt(request.getParameter("sessionId")).getName() + "</b><br/>" + request.getParameter("sessionId") + "</b><br/>");
+            if (this.game.whoIsIt(request.getParameter("sessionId")) != null) {
+                if (this.game.isFighting(this.game.whoIsIt(request.getParameter("sessionId")))) {
                     htmlMessage = "<form method=\"POST\" action=\"command\">\n" +
                         "    <table>\n" +
                         "        <tr>\n" +
@@ -71,12 +71,12 @@ public class CommandServlet extends HttpServlet {
                         "    </table>\n" +
                         "</form>";
                 } else {
-                    if (this.game.whoIsIt(request).playerController.isWinner()) {
+                    if (this.game.whoIsIt(request.getParameter("sessionId")).playerController.isWinner()) {
                         htmlMessage = "<p><b>" + "YOU WON!" + "</b><br/>";
                         game.playerViewers = new ArrayList<>();
                         game.playersSessions = new ArrayList<>();
                     } else {
-                        htmlMessage = "<p><b>" + this.game.whoIsIt(request).getName() + "</b><br/>" + this.game.playerCommand(request) + "</p>";
+                        htmlMessage = "<p><b>" + this.game.whoIsIt(request.getParameter("sessionId")).getName() + "</b><br/>" + this.game.playerCommand(request) + "</p>";
                     }
                 }
             }

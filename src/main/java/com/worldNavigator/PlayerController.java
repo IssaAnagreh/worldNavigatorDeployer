@@ -1,5 +1,7 @@
 package com.worldNavigator;
 
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -66,7 +68,6 @@ public class PlayerController implements PlayerControllerInterface {
         this.shortCommandsMap.put("light", PlayerControllerInterface::switchLights);
         this.shortCommandsMap.put("flash", PlayerControllerInterface::flashLight);
         this.shortCommandsMap.put("master", playerController -> this.playerModel.use_masterKey());
-        this.shortCommandsMap.put("setloc", PlayerControllerInterface::setLocation);
     }
 
     public void init_commands() {
@@ -292,9 +293,9 @@ public class PlayerController implements PlayerControllerInterface {
         this.playerModel.open();
     }
 
-    public void setLocation() {
-        this.playerModel.setLocation();
-    }
+//    public void setLocation() {
+//        this.playerModel.setLocation();
+//    }
 
     public void trade() {
         this.playerModel.trade();
@@ -357,14 +358,18 @@ public class PlayerController implements PlayerControllerInterface {
     }
 
     public void use_method(String command) {
+        System.out.println("in PlayerController use_method");
         Command c = this.commandsMap.get(command);
+        System.out.println("c is determined");
         if (c == null) {
             c = this.shortCommandsMap.get(command);
         }
         if (c == null) {
-            this.playerModel.notify_player("Use a valid command");
-            this.commands();
+            System.out.println("c is null");
+//            this.playerModel.notify_player("Use a valid command");
+//            this.commands();
         } else {
+            System.out.println("apply command: "+ c.toString());
             c.applyCommand(this);
         }
     }
@@ -400,11 +405,11 @@ public class PlayerController implements PlayerControllerInterface {
     }
 
     public boolean isWinner() {
-        return this.playerModel.winner;
+        return this.playerModel.getIsWinner();
     }
 
     public void setWinner() {
-        this.playerModel.winner = true;
+        this.playerModel.setIsWinner();
     }
 
     @Override

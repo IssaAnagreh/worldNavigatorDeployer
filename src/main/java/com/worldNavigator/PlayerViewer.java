@@ -23,11 +23,11 @@ public class PlayerViewer implements Observer {
         String msg = (String) arg;
         this.msg = msg;
         if (playerModel.consoleColor == null) {
-            if (playerModel.isInline) {
+//            if (playerModel.isInline) {
 //                System.out.print(msg);
-            } else {
+//            } else {
 //                System.out.println(msg);
-            }
+//            }
         } else {
             update(o, msg, playerModel.consoleColor);
         }
@@ -57,12 +57,6 @@ public class PlayerViewer implements Observer {
         }
 
         PlayerModel playerModel = (PlayerModel) o;
-
-        if (playerModel.isInline) {
-//            System.out.print(ANSI + msg + ANSI_RESET);
-        } else {
-//            System.out.println(ANSI + msg + ANSI_RESET);
-        }
     }
 
     public String getName() {

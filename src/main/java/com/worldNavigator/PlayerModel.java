@@ -1,7 +1,8 @@
 package com.worldNavigator;
 
 import com.mongodb.client.MongoCursor;
-import org.bson.BsonDocument;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import jdk.nashorn.api.scripting.JSObject;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.json.simple.JSONArray;
@@ -10,29 +11,19 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.set;
 
 public class PlayerModel extends Observable {
-    public final MapFactory map;
-    public String name;
-    public int roomIndex;
+//    public final MapFactory map;
     public Map<String, Object> contents;
-    private String orientation;
-    private String location;
     public GameTimer timer;
     public Game game;
-    private boolean isPlaying;
-    static BufferedReader br;
-    public Boolean isInline = false;
     public ConsoleColors consoleColor;
     private ContentManager contentManager;
     public Map<String, Object> fight = new HashMap<>();
-    boolean winner = false;
     DB db;
     String sessionId;
 
@@ -42,29 +33,12 @@ public class PlayerModel extends Observable {
         this.sessionId = sessionId;
         this.fight.put("isFighting", false);
         this.fight.put("against", null);
-        this.map = map;
         this.game = game;
-        this.name = name;
         this.contentManager = new ContentManager();
         String player_string = "player";
         HashMap<String, Object> player_details = (HashMap) map.jsonMap.get(player_string);
         this.contentManager.managePlayer(player_details);
         this.contents = this.contentManager.getContents();
-        this.location = "b5";
-        this.orientation = "south";
-        for (Integer roomIndex: map.starterRooms.keySet()) {
-            if (map.starterRooms.get(roomIndex)) {
-                this.roomIndex = roomIndex;
-                map.starterRooms.put(roomIndex, false);
-                break;
-            }
-        }
-
-        this.getMap();
-        this.getRooms();
-        this.getRoom(0);
-        this.getPlayer(this.sessionId);
-        this.getRoomIndex(this.sessionId);
     }
 
     private void generateCollection(MapFactory map, Game game, String name, String sessionId) {
@@ -72,7 +46,7 @@ public class PlayerModel extends Observable {
         HashMap<String, Object> player_details = (HashMap) map.jsonMap.get("player");
         contentManager.managePlayer(player_details);
 
-        HashMap<String, String> dbHashMap = new HashMap<>();
+        HashMap<String, Object> dbHashMap = new HashMap<>();
         dbHashMap.put("game", Integer.toString(game.id));
         dbHashMap.put("name", name);
         dbHashMap.put("sessionId", sessionId);
@@ -86,7 +60,7 @@ public class PlayerModel extends Observable {
         dbHashMap.put("location", "c3");
         dbHashMap.put("contents", contentManager.getContents().toString());
         dbHashMap.put("orientation", "north");
-        dbHashMap.put("isPlaying", Boolean.toString(this.isPlaying));
+        dbHashMap.put("isPlaying", Boolean.toString(false));
         dbHashMap.put("winner", Boolean.toString(false));
         HashMap<String, Object> fight = new HashMap();
         fight.put("isFighting", false);
@@ -133,16 +107,15 @@ public class PlayerModel extends Observable {
         return json;
     }
 
-    public HashMap getRoom(int roomNumber) {
+    public HashMap getRoom(int roomIndex) {
         this.db = new DB();
-        Bson filter = and(eq("roomNumber", "0"), eq("game", "0"));
+        Bson filter = and(eq("roomIndex", Integer.toString(roomIndex)), eq("game", Integer.toString(this.game.id)));
         MongoCursor<Document> roomString = this.db.findOneWithFilters("Rooms", filter);
         JSONArray jsonArray = new JSONArray();
         while (roomString.hasNext()) {
             Document doc = roomString.next();
             jsonArray.add(doc.toJson());
         }
-
         JSONObject json = null;
         try {
             json = (JSONObject) new JSONParser().parse(jsonArray.get(0).toString());
@@ -155,6 +128,10 @@ public class PlayerModel extends Observable {
 
     public int getRoomIndex(String sessionId) {
         return Integer.parseInt(this.getPlayer(sessionId).get("roomIndex").toString());
+    }
+
+    public void setRoomIndex(String newRoomIndex) {
+        this.db.updatePlayer("Players", this.sessionId, "roomIndex", newRoomIndex);
     }
 
     public HashMap getPlayer(String sessionId) {
@@ -176,8 +153,44 @@ public class PlayerModel extends Observable {
         return json;
     }
 
-    public void addToRoom(PlayerViewer playerViewer) {
-        this.map.rooms.get(this.roomIndex).addOccupant(this.game.whoIsIt_name(this.name), this.game);
+    public String getName() {
+        return this.getPlayer(this.sessionId).get("name").toString();
+    }
+
+    public String getIsPlaying() {
+        return this.getPlayer(this.sessionId).get("isPlaying").toString();
+    }
+
+    public void setIsPlaying() {
+        this.game.db.updatePlayer("Players", this.sessionId, "isPlaying", "true");
+    }
+
+    public String getOrientation() {
+        return this.getPlayer(this.sessionId).get("orientation").toString();
+    }
+
+    public void setOrientation(String newOrientation) {
+        this.game.db.updatePlayer("Players", this.sessionId, "orientation", newOrientation);
+    }
+
+    public void setIsWinner() {
+        this.game.db.updatePlayer("Players", this.sessionId, "winner", "true");
+    }
+
+    public Boolean getIsWinner() {
+        return Boolean.parseBoolean(this.getPlayer(this.sessionId).get("winner").toString());
+    }
+
+    public String getLocation() {
+        return this.getPlayer(this.sessionId).get("location").toString();
+    }
+
+    public void setLocation(String newLocation) {
+        this.game.db.updatePlayer("Players", this.sessionId, "location", newLocation);
+    }
+
+    public void addToRoom() {
+        new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).addOccupant(this.game.whoIsIt_name(this.getName()), this.game);
     }
 
     public void notify_player(String msg) {
@@ -197,9 +210,8 @@ public class PlayerModel extends Observable {
     }
 
     public void startGame() {
-        this.isPlaying = true;
-        this.timer = new GameTimer(this.map.endTime, this);
-//    this.br = new BufferedReader(new InputStreamReader(System.in));
+        this.setIsPlaying();
+        this.timer = new GameTimer(Integer.parseInt(this.getMap().get("endTime").toString()), this);
     }
 
     public int power() {
@@ -223,83 +235,120 @@ public class PlayerModel extends Observable {
     }
 
     public RoomDrawer drawRoom() {
-        return new RoomDrawer(location, this.map.rooms.get(this.roomIndex));
+        return new RoomDrawer(this.getLocation(), new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game), this.game);
     }
 
     public void wall() {
-        if (this.map.rooms.get(this.roomIndex).getIsLit() != null && this.map.rooms.get(this.roomIndex).getIsLit()) {
-            notify_player(this.map.rooms.get(this.roomIndex).walls.get(this.orientation).toString());
+        if (new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).getIsLit() != null && new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).getIsLit()) {
+            notify_player(new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).walls.get(this.getOrientation()).toString());
         } else {
             notify_player("Dark", ConsoleColors.red);
         }
     }
 
-    public String getOrientation() {
-        return this.orientation;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
     public boolean isPlaying() {
-        return isPlaying;
+        return Boolean.parseBoolean(this.getIsPlaying());
     }
 
     public void myItems() {
-        System.out.println("name: " + this.name);
         notify_player(this.contents == null ? "Nothing" : this.contents.toString());
     }
 
     public void move(MoveTypes move) {
         Transition new_location = new Transition(this);
-        new_location.move(this.location, this.orientation, move);
-        this.location = new_location.toString();
+        new_location.move(this.getLocation(), this.getOrientation(), move);
+        this.setLocation(new_location.toString());
         notify_player(new_location.printOut(), ConsoleColors.blue);
-        this.game.db.updatePlayer("Players", this.sessionId, "location", this.location);
+        this.game.db.updatePlayer("Players", this.sessionId, "location", this.getLocation());
     }
 
     public void nextRoom_move() {
         Transition new_location = new Transition(this);
-        new_location.openNextRoom(this.location, this.orientation, MoveTypes.forward);
-        notify_player("You are in: " + new_location.toString() + " in room number: " + (this.roomIndex + 1), ConsoleColors.blue);
-        this.location = new_location.toString();
-        this.game.db.updatePlayer("Players", this.sessionId, "location", this.location);
-        this.game.db.updatePlayer("Players", this.sessionId, "roomIndex", Integer.toString(this.roomIndex));
+        new_location.openNextRoom(this.getLocation(), this.getOrientation(), MoveTypes.forward);
+        notify_player("You are in: " + new_location.toString() + " in room number: " + (this.getRoomIndex(this.sessionId) + 1), ConsoleColors.blue);
+        this.setLocation(new_location.toString());
+        this.game.db.updatePlayer("Players", this.sessionId, "location", this.getLocation());
+        this.game.db.updatePlayer("Players", this.sessionId, "roomIndex", Integer.toString(this.getRoomIndex(this.sessionId)));
     }
 
     public void rotateLeft() {
-        this.orientation = new Rotate(this.orientation, this).left();
-        this.game.db.updatePlayer("Players", this.sessionId, "orientation", this.orientation);
+        this.setOrientation(new Rotate(this.getOrientation(), this).left());
+        this.game.db.updatePlayer("Players", this.sessionId, "orientation", this.getOrientation());
     }
 
     public void rotateRight() {
-        this.orientation = new Rotate(this.orientation, this).right();
-        this.game.db.updatePlayer("Players", this.sessionId, "orientation", this.orientation);
+        this.setOrientation(new Rotate(this.getOrientation(), this).right());
+        this.game.db.updatePlayer("Players", this.sessionId, "orientation", this.getOrientation());
     }
 
     public void look() {
-        if (this.map.rooms.get(this.roomIndex).getIsLit() != null && this.map.rooms.get(this.roomIndex).getIsLit()) {
-            Wall opposite_wall = this.map.rooms.get(this.roomIndex).walls.get(this.orientation);
-            notify_player(opposite_wall.checkItems());
+        int sessionId = this.getRoomIndex(this.sessionId);
+        HashMap room = this.getRoom(sessionId);
+        if (room != null && Boolean.parseBoolean(room.get("isLit").toString())) {
+            HashMap<String, String> map = (HashMap) this.getWall().get("itemsLocations");
+            notify_player(map.toString());
         } else {
             notify_player("Dark");
         }
     }
 
+    public HashMap<String, JSONObject> getWalls() {
+        DB db = new DB();
+        Bson filter = and(eq("roomIndex", Integer.toString(this.getRoomIndex(this.sessionId))), eq("game", Integer.toString(this.game.id)));
+        MongoCursor<Document> wallString = db.findOneWithFilters("Walls", filter);
+        JSONArray jsonArray = new JSONArray();
+        while (wallString.hasNext()) {
+            Document doc = wallString.next();
+            jsonArray.add(doc.toJson());
+        }
+
+        HashMap<String, JSONObject> output = new HashMap();
+        for (Object obj : jsonArray) {
+            JSONObject json;
+            try {
+                json = (JSONObject) new JSONParser().parse(obj.toString());
+                output.put(json.get("name").toString(), json);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return output;
+    }
+
+    public HashMap getWall() {
+        DB db = new DB();
+        HashMap player = this.getPlayer(this.sessionId);
+        Bson filter = and(eq("roomIndex", player.get("roomIndex")), eq("game", Integer.toString(this.game.id)), eq("name", player.get("orientation")+"_wall"));
+        MongoCursor<Document> wallString = db.findOneWithFilters("Walls", filter);
+
+        JSONArray jsonArray = new JSONArray();
+        while (wallString.hasNext()) {
+            Document doc = wallString.next();
+            jsonArray.add(doc.toJson());
+        }
+
+        JSONObject json = null;
+        try {
+            json = (JSONObject) new JSONParser().parse(jsonArray.get(0).toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return json;
+    }
+
     public String getType() {
-        return this.map.rooms.get(this.roomIndex).walls.get(this.orientation).itemsFactory.getType(this.location);
+        return (new Wall(this.getWalls().get(this.getOrientation()+"_wall"), this.game)).itemsFactory.getType(this.getLocation());
     }
 
     public void check() {
-        notify_player(this.map.rooms.get(this.roomIndex).walls.get(this.orientation).itemsFactory.checkItemByLocation(this.location));
+        notify_player(new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).walls.get(this.getOrientation()).itemsFactory.checkItemByLocation(this.getLocation()));
     }
 
     public void acquire_items() {
-        Item item = this.map.rooms.get(this.roomIndex).walls.get(this.orientation).itemsFactory.getItem(this.location);
+        Item item = new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).walls.get(this.getOrientation()).itemsFactory.getItem(this.getLocation());
         if (!item.toString().equals("Space")) {
-            System.out.println("player name: " + name);
-            item.applyAcquire(this.location, this);
+            item.applyAcquire(this.getLocation(), this);
         }
         this.game.db.updatePlayer("Players", this.sessionId, "contents", this.contents.toString());
     }
@@ -328,7 +377,7 @@ public class PlayerModel extends Observable {
                 if ((castToKeyCheckerArrayList(this.contents.get("keys"))).isEmpty()) {
                     print = "You have no keys";
                 } else {
-                    Item item = this.map.rooms.get(this.roomIndex).walls.get(this.orientation).itemsFactory.getItem(this.location);
+                    Item item = new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).walls.get(this.getOrientation()).itemsFactory.getItem(this.getLocation());
                     print =
                         item.toString().equals("Space")
                             ? "Opening nothing"
@@ -349,7 +398,7 @@ public class PlayerModel extends Observable {
         String masterKeysString = "masterKeys";
         if ((castToInt(this.contents.get(masterKeysString))) > 0) {
             masterKeysList.add(new MasterKey());
-            Item item = this.map.rooms.get(this.roomIndex).walls.get(this.orientation).itemsFactory.getItem(this.location);
+            Item item = new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).walls.get(this.getOrientation()).itemsFactory.getItem(this.getLocation());
             print =
                 item.toString().equals("Space") ? "Opening nothing" : item.applyUseKey(masterKeysList);
             this.contents.put(masterKeysString, castToInt(this.contents.get(masterKeysString)) - 1);
@@ -360,10 +409,10 @@ public class PlayerModel extends Observable {
     }
 
     public void open() {
-        Item item = this.map.rooms.get(this.roomIndex).walls.get(this.orientation).itemsFactory.getItem(this.location);
+        Item item = new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).walls.get(this.getOrientation()).itemsFactory.getItem(this.getLocation());
         if (item instanceof NextGoing) {
             NextGoing openable = (NextGoing) item;
-            if (item.getLocation().equals(this.location)) {
+            if (item.getLocation().equals(this.getLocation())) {
                 this.checkNextRoom(openable);
             } else {
                 notify_player("Nothing to be opened", ConsoleColors.red);
@@ -378,34 +427,32 @@ public class PlayerModel extends Observable {
         String nextRoom = openable.getNextRoom();
         if (nextRoom.contentEquals("golden")) {
             notify_player("CONGRATULATIONS! YOU WON THE GAME");
-            this.winner = true;
+            this.setIsWinner();
             this.game.db.updatePlayer("Players", this.sessionId, "winner", "true");
-            this.game.endGame(this.game.whoIsIt_name(this.name));
+            this.game.endGame(this.game.whoIsIt_name(this.getName()));
         }
         if (nextRoom.equals("")) {
             notify_player("This " + openable.getName() + " opens to nothing", ConsoleColors.red);
             return;
         }
-        for (Room room_candidate : this.map.rooms) {
+        int roomIndex = 0;
+        for (Object jsonRoom : this.getRooms().values()) {
+            Room room_candidate = new Room((JSONObject) jsonRoom, this.game);
             if (room_candidate.ROOM_NAME.equals(nextRoom)) {
-                this.roomIndex = this.map.rooms.indexOf(room_candidate);
-                room_candidate.addOccupant(this.game.whoIsIt_name(this.name), this.game);
+                this.setRoomIndex(Integer.toString(roomIndex));
+                room_candidate.addOccupant(this.game.whoIsIt_name(this.getName()), this.game);
                 this.nextRoom_move();
                 isOpened = true;
             }
+            roomIndex++;
         }
         if (!isOpened && nextRoom.equals("locked")) {
             notify_player("The " + openable.getName() + " is locked", ConsoleColors.red);
         }
     }
 
-    public void setLocation() {
-        Scanner sc = new Scanner(System.in);
-        this.location = sc.nextLine();
-    }
-
     public void trade() {
-        Seller seller = (Seller) this.map.rooms.get(this.roomIndex).walls.get(this.orientation).items.get("seller");
+        Seller seller = (Seller) new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).walls.get(this.getOrientation()).items.get("seller");
 
         if (seller != null) {
             notify_player("You can use buy, sell, list or finish commands");
@@ -448,17 +495,19 @@ public class PlayerModel extends Observable {
     }
 
     public void switchLights() {
-        this.map.rooms.get(this.roomIndex).switchLights(this);
+        int roomIndex = this.getRoomIndex(this.sessionId);
+        HashMap room = this.getRoom(roomIndex);
+        new Room((JSONObject) room, this.game).switchLights(this);
     }
 
     public void flashLight() {
-        if (this.map.rooms.get(this.roomIndex).getIsLit() != null && this.map.rooms.get(this.roomIndex).getIsLit()) {
+        if (new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).getIsLit() != null && new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).getIsLit()) {
             notify_player("You don't need to light a lit room");
             return;
         }
         if (castToInt(this.contents.get("flashLights")) > 0) {
             this.contents.put(
-                "flashLights", this.map.rooms.get(this.roomIndex).useFlashLight(castToInt(this.contents.get("flashLights")), this));
+                "flashLights", new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).useFlashLight(castToInt(this.contents.get("flashLights")), this));
         } else {
             notify_player("You have no flashLights", ConsoleColors.red);
         }

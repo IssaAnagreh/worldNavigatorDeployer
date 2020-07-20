@@ -2,6 +2,7 @@ package com.worldNavigator;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -98,7 +99,7 @@ public class Game {
         PlayerController player = new PlayerController(new PlayerModel(this.maps.maps.get(this.map_index), this, name, playerSession));
         this.playerViewer = new PlayerViewer(player, name, playerSession);
         playerViewers.add(this.playerViewer);
-        player.playerModel.addToRoom(this.playerViewer);
+        player.playerModel.addToRoom();
     }
 
     public void start() throws IOException {
@@ -135,6 +136,7 @@ public class Game {
     }
 
     public String playerCommand(HttpServletRequest request) {
+        System.out.println("starting playerCommand");
         if (!this.isStarted) {
             return "Game didn't start yet, " + this.playerViewers.size() + " players available, game must have " + 2 + " players";
         }
@@ -142,12 +144,14 @@ public class Game {
         if (this.playerViewers.size() == 1) {
             return "<b>" + "You are the last player, You won!" + "</b>";
         }
+
         PlayerViewer user = null;
         for (PlayerViewer playerViewer : playerViewers) {
             if (playerViewer.playerSession.equals(request.getParameter("sessionId"))) {
                 user = playerViewer;
             }
         }
+
         assert user != null;
         if (user.playerController.playerModel.isPlaying()) {
             String message = "";
@@ -180,6 +184,7 @@ public class Game {
             } else if (request.getParameter("quit") != null) {
                 this.exit(request);
             }
+            System.out.println("before use_method");
             user.playerController.use_method(message.trim());
             return user.msg;
         }
@@ -196,17 +201,20 @@ public class Game {
         return user;
     }
 
-    public PlayerViewer whoIsIt(HttpServletRequest request) {
+    public PlayerViewer whoIsIt(String sessionId) {
         PlayerViewer user = null;
         for (PlayerViewer playerViewer : playerViewers) {
-            if (playerViewer.playerSession.equals(request.getParameter("sessionId"))) {
+            if (playerViewer.playerSession.equals(sessionId)) {
                 user = playerViewer;
             }
         }
         return user;
     }
 
-    public void fight(PlayerViewer playerViewer1, PlayerViewer playerViewer2) {
+    public void fight(String playerViewer1_sessionId, String playerViewer2_sessionId) {
+//        request.getParameter("sessionId")
+        PlayerViewer playerViewer1 = whoIsIt(playerViewer1_sessionId);
+        PlayerViewer playerViewer2 = whoIsIt(playerViewer2_sessionId);
         int power1 = playerViewer1.playerController.playerModel.power();
         int power2 = playerViewer2.playerController.playerModel.power();
         if (power1 > power2) {
@@ -227,11 +235,11 @@ public class Game {
     }
 
     public void setFightingChoice(HttpServletRequest request, String choice) {
-        this.whoIsIt(request).playerController.setFightingChoice(choice);
-        if (this.whoIsIt(request).playerController.fightingAgainst().playerController.getFightingChoice() != null) {
+        this.whoIsIt(request.getParameter("sessionId")).playerController.setFightingChoice(choice);
+        if (this.whoIsIt(request.getParameter("sessionId")).playerController.fightingAgainst().playerController.getFightingChoice() != null) {
 
-            PlayerViewer lostPlayerViewer = this.whoLost(this.whoIsIt(request), this.whoIsIt(request).playerController.fightingAgainst());
-            PlayerViewer wonPlayerViewer = this.whoWon(this.whoIsIt(request), this.whoIsIt(request).playerController.fightingAgainst());
+            PlayerViewer lostPlayerViewer = this.whoLost(this.whoIsIt(request.getParameter("sessionId")), this.whoIsIt(request.getParameter("sessionId")).playerController.fightingAgainst());
+            PlayerViewer wonPlayerViewer = this.whoWon(this.whoIsIt(request.getParameter("sessionId")), this.whoIsIt(request.getParameter("sessionId")).playerController.fightingAgainst());
 
             wonPlayerViewer.playerController.setFightingAgainst(null);
             wonPlayerViewer.playerController.setIsFighting(false);
@@ -338,8 +346,8 @@ public class Game {
         int freeGolds = playerViewer.playerController.getGolds();
         int freeFlashLights = playerViewer.playerController.getFlashLights();
         ArrayList<KeyChecker> freeKeys = playerViewer.playerController.getKeys();
-        System.out.println("this.playerViewer.playerController.playerModel.roomIndex: " + playerViewer.playerController.playerModel.roomIndex);
-        Map<String, Object> emptyLocation = playerViewer.playerController.playerModel.map.rooms.get(playerViewer.playerController.playerModel.roomIndex).getEmptyLocation();
+        System.out.println("this.playerViewer.playerController.playerModel.roomIndex: " + playerViewer.playerController.playerModel.getRoomIndex(playerViewer.playerSession));
+        Map<String, Object> emptyLocation = new Room((JSONObject) playerViewer.playerController.playerModel.getRooms().get(playerViewer.playerController.playerModel.getRoomIndex(playerViewer.playerSession)), this).getEmptyLocation();
 
         JSONObject content = new JSONObject();
         JSONArray keys = new JSONArray();

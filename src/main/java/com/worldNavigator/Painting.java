@@ -17,7 +17,7 @@ public class Painting extends Item {
   }
 
   private void generateCollection() {
-    HashMap<String, String> dbHashMap = new HashMap<>();
+    HashMap<String, Object> dbHashMap = new HashMap<>();
     dbHashMap.put("game", Integer.toString(this.game.id));
     dbHashMap.put("name", this.NAME);
     dbHashMap.put("location", this.LOCATION);

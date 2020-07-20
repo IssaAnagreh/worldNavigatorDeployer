@@ -1,4 +1,6 @@
 package com.worldNavigator;
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 
 public interface PlayerControllerInterface {
@@ -31,8 +33,6 @@ public interface PlayerControllerInterface {
   void use_key();
 
   void open();
-
-  void setLocation();
 
   void trade();
 

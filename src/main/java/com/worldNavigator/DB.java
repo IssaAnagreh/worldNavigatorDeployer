@@ -90,7 +90,7 @@ public class DB {
         return collection;
     }
 
-    public void insertOne(String collectionName, HashMap<String, String> doc) {
+    public void insertOne(String collectionName, HashMap<String, Object> doc) {
         MongoCollection<Document> collection = this.getCollection(collectionName);
         Document document = new Document();
         for (String key : doc.keySet()) {
@@ -147,10 +147,10 @@ public class DB {
         coll.updateOne(filter, updateOperation);
     }
 
-    public void updateRoom(String game, String roomNumber, String field, String change) {
+    public void updateRoom(String game, String roomIndex, String field, String change) {
         MongoCollection<Document> coll = this.getCollection("Rooms");
 
-        Bson filter = and(eq("roomNumber", roomNumber), eq("game", game));
+        Bson filter = and(eq("roomIndex", roomIndex), eq("game", game));
         Bson updateOperation = set(field, change);
         coll.updateOne(filter, updateOperation);
     }
