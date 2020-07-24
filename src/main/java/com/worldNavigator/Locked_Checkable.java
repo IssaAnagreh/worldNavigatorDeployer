@@ -11,6 +11,8 @@ public class Locked_Checkable extends Checkable implements CheckBehavior {
 
   public Locked_Checkable(JSONObject item, String location, UseKeyBehavior useKeyBehavior) {
     super(location);
+    System.out.println("Locked_Checkable item: "+item);
+    System.out.println("Locked_Checkable useKeyBehavior: "+useKeyBehavior);
     this.useKeyBehavior = useKeyBehavior;
     super.setContents(item);
   }

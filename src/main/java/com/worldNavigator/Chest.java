@@ -1,5 +1,6 @@
 package com.worldNavigator;
 
+import org.bson.Document;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
@@ -24,12 +25,29 @@ public class Chest extends Item {
     this.generateCollection();
   }
 
+  public Chest(JSONObject chest) {
+    this.NAME = chest.get("name").toString();
+    this.LOCATION = chest.get("location").toString();
+
+    if (chest.get("key") == null) {
+      super.setCheckBehavior(new Unlocked_Checkable(chest, this.LOCATION));
+    } else {
+      super.setUseKeyBehavior(new Openable(chest, "Chest"));
+      super.setCheckBehavior(new Locked_Checkable(chest, this.LOCATION, super.useKeyBehavior));
+    }
+  }
+
   private void generateCollection() {
     HashMap<String, Object> dbHashMap = new HashMap<>();
     dbHashMap.put("game", Integer.toString(this.game.id));
     dbHashMap.put("name", this.NAME);
     dbHashMap.put("location", this.LOCATION);
-    dbHashMap.put("contents", super.checkBehavior.getContents().getContents().toString());
+    dbHashMap.put("type", this.getType());
+    Document document = new Document();
+    for (String key : super.checkBehavior.getContents().contentsStrings.keySet()) {
+      document.append(key, super.checkBehavior.getContents().contentsStrings.get(key));
+    }
+    dbHashMap.put("contents", document);
     this.game.db.insertOne("Chests", dbHashMap);
   }
 
@@ -69,6 +87,10 @@ public class Chest extends Item {
 
   @Override
   public String toString() {
+    System.out.println("super.useKeyBehavior: "+super.useKeyBehavior);
+    if (super.useKeyBehavior == null) {
+      return "UNLOCKED Chest: " + this.NAME + ", in: " + this.LOCATION;
+    }
     return (super.useKeyBehavior.get_isLocked() != null && super.useKeyBehavior.get_isLocked())
         ? "LOCKED Chest: " + this.NAME + ", in: " + this.LOCATION
         : "UNLOCKED Chest: " + this.NAME + ", in: " + this.LOCATION;

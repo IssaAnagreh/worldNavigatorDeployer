@@ -364,12 +364,8 @@ public class PlayerController implements PlayerControllerInterface {
         if (c == null) {
             c = this.shortCommandsMap.get(command);
         }
-        if (c == null) {
-            System.out.println("c is null");
-//            this.playerModel.notify_player("Use a valid command");
-//            this.commands();
-        } else {
-            System.out.println("apply command: "+ c.toString());
+        if (c != null) {
+            System.out.println("apply command: " + c.toString());
             c.applyCommand(this);
         }
     }

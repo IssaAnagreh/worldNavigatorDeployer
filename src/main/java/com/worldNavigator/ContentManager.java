@@ -2,6 +2,8 @@ package com.worldNavigator;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,22 +12,27 @@ import java.util.Map;
 
 public class ContentManager {
   private Map<String, Object> contents = new HashMap<>();
+  public Map<String, Object> contentsStrings = new HashMap<>();
 
   public void manageItem(JSONObject item) {
-    JSONObject content = (JSONObject) item.get("content");
+    JSONObject content = (JSONObject) item.get("contents");
     if (content != null) {
       for (ContentsTypes contentType : ContentsTypes.values()) {
         if (content.get(contentType.toString()) != null) {
           if (contentType.toString().equals("keys")) {
             JSONArray keys_names = (JSONArray) content.get(contentType.toString());
             List<Key> keys = new ArrayList<>();
+            List<String> keysString = new ArrayList<>();
             if (keys_names != null) {
               keys_names.forEach(emp -> keys.add(new Key(emp.toString())));
+              keys_names.forEach(emp -> keysString.add(new Key(emp.toString()).toString()));
               this.contents.put(contentType.toString(), keys);
+              this.contentsStrings.put(contentType.toString(), keysString);
             }
           } else {
             int single_content = Integer.parseInt(content.get(contentType.toString()).toString());
             this.contents.put(contentType.toString(), single_content);
+            this.contentsStrings.put(contentType.toString(), single_content);
           }
         }
       }
@@ -33,7 +40,9 @@ public class ContentManager {
   }
 
   public void manageSellerItem(JSONObject seller) {
-    this.contents = (HashMap) seller.get("content");
+    this.contents = (HashMap) seller.get("contents");
+    this.contentsStrings = (HashMap) seller.get("contents");
+
     if (this.contents != null) {
       for (String contentKey : contents.keySet()) {
         if (contentKey.equals("keys")) {

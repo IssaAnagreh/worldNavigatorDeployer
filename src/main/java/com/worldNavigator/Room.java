@@ -77,10 +77,6 @@ public class Room {
         dbHashMap.put("lightSwitch", this.lightSwitch.toString());
         dbHashMap.put("game", Integer.toString(this.game.id));
         dbHashMap.put("occupants", this.occupants.toString());
-        HashMap<String, String> map = new HashMap<>();
-        map.put("Isa", "true");
-        map.put("Maram", "true");
-        dbHashMap.put("itemsLocation", map.toString());
         this.game.db.insertOne("Rooms", dbHashMap);
     }
 

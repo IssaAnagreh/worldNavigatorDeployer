@@ -57,9 +57,11 @@ public class RoomDrawer {
 
         HashMap<String, JSONObject> output = new HashMap();
         for (Object obj : jsonArray) {
+            System.out.println("ROOM DRAWER obj: "+obj);
             JSONObject json;
             try {
                 json = (JSONObject) new JSONParser().parse(obj.toString());
+                System.out.println("ROOM DRAWER json: "+json);
                 output.put(json.get("name").toString(), json);
             } catch (ParseException e) {
                 e.printStackTrace();

@@ -22,6 +22,7 @@ public class Window extends Item {
     HashMap<String, Object> dbHashMap = new HashMap<>();
     dbHashMap.put("game", Integer.toString(this.game.id));
     dbHashMap.put("name", this.NAME);
+    dbHashMap.put("type", this.getType());
     dbHashMap.put("location", this.LOCATION);
     this.game.db.insertOne("Windows", dbHashMap);
   }

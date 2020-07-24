@@ -31,6 +31,7 @@ public class Gate extends Item implements NextGoing {
     dbHashMap.put("name", this.NAME);
     dbHashMap.put("location", this.LOCATION);
     dbHashMap.put("isGolden", Boolean.toString(this.IS_GOLDEN));
+    dbHashMap.put("type", this.getType());
     dbHashMap.put("nextRoom", this.NEXT_ROOM);
     this.game.db.insertOne("Gates", dbHashMap);
   }

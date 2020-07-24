@@ -21,6 +21,7 @@ public class Table extends Item {
     dbHashMap.put("game", Integer.toString(this.game.id));
     dbHashMap.put("name", this.NAME);
     dbHashMap.put("location", this.LOCATION);
+    dbHashMap.put("type", this.getType());
     dbHashMap.put("contents", super.checkBehavior.getContents().getContents().toString());
     this.game.db.insertOne("Tables", dbHashMap);
   }

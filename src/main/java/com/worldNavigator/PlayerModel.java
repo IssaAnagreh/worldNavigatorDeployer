@@ -17,7 +17,7 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 public class PlayerModel extends Observable {
-//    public final MapFactory map;
+    //    public final MapFactory map;
     public Map<String, Object> contents;
     public GameTimer timer;
     public Game game;
@@ -50,16 +50,16 @@ public class PlayerModel extends Observable {
         dbHashMap.put("game", Integer.toString(game.id));
         dbHashMap.put("name", name);
         dbHashMap.put("sessionId", sessionId);
-        for (Integer roomIndex: map.starterRooms.keySet()) {
+        for (Integer roomIndex : map.starterRooms.keySet()) {
             if (map.starterRooms.get(roomIndex)) {
                 dbHashMap.put("roomIndex", Integer.toString(roomIndex));
                 map.starterRooms.put(roomIndex, false);
                 break;
             }
         }
-        dbHashMap.put("location", "c3");
+        dbHashMap.put("location", "a4");
         dbHashMap.put("contents", contentManager.getContents().toString());
-        dbHashMap.put("orientation", "north");
+        dbHashMap.put("orientation", "west");
         dbHashMap.put("isPlaying", Boolean.toString(false));
         dbHashMap.put("winner", Boolean.toString(false));
         HashMap<String, Object> fight = new HashMap();
@@ -318,7 +318,7 @@ public class PlayerModel extends Observable {
     public HashMap getWall() {
         DB db = new DB();
         HashMap player = this.getPlayer(this.sessionId);
-        Bson filter = and(eq("roomIndex", player.get("roomIndex")), eq("game", Integer.toString(this.game.id)), eq("name", player.get("orientation")+"_wall"));
+        Bson filter = and(eq("roomIndex", player.get("roomIndex")), eq("game", Integer.toString(this.game.id)), eq("name", player.get("orientation") + "_wall"));
         MongoCursor<Document> wallString = db.findOneWithFilters("Walls", filter);
 
         JSONArray jsonArray = new JSONArray();
@@ -338,15 +338,107 @@ public class PlayerModel extends Observable {
     }
 
     public String getType() {
-        return (new Wall(this.getWalls().get(this.getOrientation()+"_wall"), this.game)).itemsFactory.getType(this.getLocation());
+        return (new Wall(this.getWalls().get(this.getOrientation() + "_wall"), this.game)).itemsFactory.getType(this.getLocation());
+    }
+
+    public HashMap getItem(String collection, String location) {
+        String col = "";
+        switch (collection) {
+            case "door":
+                col = "Doors";
+                break;
+            case "chest":
+                col = "Chests";
+                break;
+            case "gate":
+                col = "Gates";
+                break;
+            case "mirror":
+                col = "Mirrors";
+                break;
+            case "painting":
+                col = "Paintings";
+                break;
+            case "safe":
+                col = "Safes";
+                break;
+            case "table":
+                col = "Tables";
+                break;
+            default:
+                // window
+                col = "Windows";
+                break;
+        }
+        DB db = new DB();
+        Bson filter = and(eq("location", location), eq("game", Integer.toString(this.game.id)));
+        MongoCursor<Document> wallString = db.findOneWithFilters(col, filter);
+        JSONArray jsonArray = new JSONArray();
+        while (wallString.hasNext()) {
+            Document doc = wallString.next();
+            jsonArray.add(doc.toJson());
+        }
+
+        JSONObject json = null;
+        try {
+            json = (JSONObject) new JSONParser().parse(jsonArray.get(0).toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return json;
     }
 
     public void check() {
-        notify_player(new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).walls.get(this.getOrientation()).itemsFactory.checkItemByLocation(this.getLocation()));
+        HashMap<String, String> map = (HashMap) this.getWall().get("itemsLocations");
+        System.out.println(map);
+        for (String key : map.keySet()) {
+            String location = this.getLocation();
+            if (key.equals(location)) {
+                this.getItem(map.get(key), location);
+            }
+        }
     }
 
     public void acquire_items() {
-        Item item = new Room((JSONObject) this.getRoom(this.getRoomIndex(this.sessionId)), this.game).walls.get(this.getOrientation()).itemsFactory.getItem(this.getLocation());
+        HashMap<String, String> map = (HashMap) this.getWall().get("itemsLocations");
+        HashMap itemMap = new HashMap();
+        for (String key : map.keySet()) {
+            String location = this.getLocation();
+            if (key.equals(location)) {
+                itemMap = this.getItem(map.get(key), location);
+            }
+        }
+
+        Item item;
+        switch (itemMap.get("type").toString()) {
+            case "door":
+                item = new Door((JSONObject) itemMap, this.game);
+                break;
+            case "chest":
+                item = new Chest((JSONObject) itemMap);
+                break;
+            case "gate":
+                item = new Gate((JSONObject) itemMap, this.game);
+                break;
+            case "mirror":
+                item = new Mirror((JSONObject) itemMap, this.game);
+                break;
+            case "painting":
+                item = new Painting((JSONObject) itemMap, this.game);
+                break;
+            case "safe":
+                item = new Safe((JSONObject) itemMap, this.game);
+                break;
+            case "table":
+                item = new Table((JSONObject) itemMap, this.game);
+                break;
+            default:
+                // window
+                item = new Window((JSONObject) itemMap, this.game);
+                break;
+        }
+
         if (!item.toString().equals("Space")) {
             item.applyAcquire(this.getLocation(), this);
         }
